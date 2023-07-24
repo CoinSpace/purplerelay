@@ -5,8 +5,8 @@ import json
 
 # ENTER YOUR HEX PUBKEY(S) BELOW:
 whitelist = {
-  "hex-pubkey-1",
-  "hex-pubkey-2"
+      '003ba9b2c5bd8afeed41a4ce362a8b7fc3ab59c25b6a1359cae9093f296dac01': true,
+      '3d99feac152027ede63326aa4f43d4ca88e4cd27296b96fe18c55d496a8f6340': true,
 }
 
 def eprint(*args, **kwargs):

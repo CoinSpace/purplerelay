@@ -1,6 +1,0 @@
-# CONFIGURE YOUR RELAY DOMAIN NAME BELOW:
-purplerelay.com {
-  reverse_proxy / strfry:7777 {
-    header_up x-real-ip {remote_host}
-  }
-}

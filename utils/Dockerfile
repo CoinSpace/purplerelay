@@ -23,6 +23,7 @@ COPY ./strfry.conf ./etc/strfry.conf
 RUN apt-get update
 RUN apt install nginx -y
 
+
 RUN apt install curl -y
 RUN set -e; \
     apt-get update -y && apt-get install -y \

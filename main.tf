@@ -5,6 +5,7 @@ module "cloud_storage" {
   environment = var.environment
 }
 
+
 module "vpc" {
   source           = "./modules/vpc"
   subnet_public_cidrs  = var.subnet_public_cidrs

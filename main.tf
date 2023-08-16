@@ -1,11 +1,3 @@
-module "cloud_storage" {
-  source = "./modules/cloud_storage"
-  region = var.region
-  project = var.project
-  environment = var.environment
-}
-
-
 module "vpc" {
   source           = "./modules/vpc"
   subnet_public_cidrs  = var.subnet_public_cidrs
@@ -17,15 +9,16 @@ module "vpc" {
 
 module "artifact_registry" {
   source = "./modules/artifact_registry"
-
   region = var.region
   project = var.project
   environment = var.environment
 }
 
-module "cloud_run" {
-  source = "./modules/cloud_run"
-  region = var.region
+module "applications" {
+  depends_on = [ module.artifact_registry, module.vpc ]
+  source = "./modules/application"
+
+  regions = var.regions
   project = var.project
   environment = var.environment
   registry_id = module.artifact_registry.registry_id

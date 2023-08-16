@@ -27,3 +27,8 @@ variable "app_name" {
   type = string
   default = "strfry"
 }
+
+variable "regions" {
+  type = list(string)
+  default = ["us-east1", "us-west1"]
+}

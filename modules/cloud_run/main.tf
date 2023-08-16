@@ -1,11 +1,21 @@
 resource "google_cloud_run_service" "cloud_run" {
-  name     = "${var.project}-app-${var.environment}"
+  name     = "${var.project}-${var.region}-app-${var.environment}"
   location = var.region
 
   template {
+    metadata {
+      annotations = {
+        "run.googleapis.com/execution-environment" = "gen2"
+      }
+    }
     spec {
+      #service_account_name = "fs-identity"
       containers {
-        image = "${var.region}-docker.pkg.dev/${var.project}/${var.registry_id}/${var.app_name}"
+        image = "us-east1-docker.pkg.dev/${var.project}/${var.registry_id}/${var.app_name}"
+        env {
+          name = "BUCKET"
+          value = var.bucket
+        }
         ports {
           container_port = 80
         }

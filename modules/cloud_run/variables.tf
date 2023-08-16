@@ -10,3 +10,6 @@ variable db_name {
 variable "app_name" {
   type = string
 }
+variable "bucket" {
+  type = string
+}

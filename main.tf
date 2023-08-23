@@ -23,12 +23,5 @@ module "applications" {
   environment = var.environment
   registry_id = module.artifact_registry.registry_id
   app_name = var.app_name
-}
-
-module "load_balancer" {
-  source = "./modules/load_balancer"
-  project = var.project
-  environment = var.environment
-  region = var.region
-  cloud_run_name = "${var.project}-${var.regions[0]}-app-${var.environment}"
+  domain_url = var.domain_url
 }

@@ -17,3 +17,7 @@ variable "registry_id" {
 variable "app_name" {
   type = string
 }
+
+variable "domain_url" {
+  type = string
+}

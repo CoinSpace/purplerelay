@@ -32,3 +32,8 @@ variable "regions" {
   type = list(string)
   default = ["us-east1", "us-west1"]
 }
+
+variable "domain_url" {
+  type = string
+  default = "purplerelay.com"
+}

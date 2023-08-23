@@ -1,6 +1,6 @@
 resource "google_compute_region_network_endpoint_group" "cloudrun_neg" {
   provider              = google-beta
-  name                  = "${var.project}-neg-${var.environment}"
+  name                  = "${var.project}-${var.region}-neg-${var.environment}"
   network_endpoint_type = "SERVERLESS"
   region                = var.region
   project = var.project
@@ -14,11 +14,11 @@ module "lb-http" {
   version           = "9.1.0"
 
   project           = var.project
-  name              = "${var.project}-lb-${var.environment}"
+  name              = "${var.project}-${var.region}-lb-${var.environment}"
 
-  managed_ssl_certificate_domains = ["YOUR_DOMAIN.COM"]
-  ssl                             = false
-  https_redirect                  = false
+  managed_ssl_certificate_domains = ["${var.domain_url}"]
+  ssl                             = true
+  https_redirect                  = true
 
   backends = {
     default = {

@@ -10,3 +10,6 @@ variable "cloud_run_name" {
 variable "region" {
   type = string
 }
+variable "domain_url" {
+  type = string
+}

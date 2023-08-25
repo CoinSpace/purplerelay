@@ -1,4 +1,5 @@
 #!/bin/bash
+cp -r ./application_default_credentials.json $HOME/.config/gcloud/application_default_credentials.json
 gcloud config set account purplerelay-github
 for region in $5
 do

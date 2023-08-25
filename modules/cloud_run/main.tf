@@ -10,7 +10,7 @@ resource "google_cloud_run_service" "cloud_run" {
     }
     spec {
       #service_account_name = "fs-identity"
-      service_account_name="purplerelay-github"
+      #service_account_name="purplerelay-github"
       containers {
         image = "us-east1-docker.pkg.dev/${var.project}/${var.registry_id}/${var.app_name}"
         env {

@@ -1,3 +1,5 @@
 #!/bin/bash
-export GENERATED_ARRAY=$(echo $1 | tr ' ' ',')
-echo $REGION_ARRAY
+sudo apt install jq
+X=($@)
+export GENERATED_ARRAY=$(jq --compact-output --null-input '$ARGS.positional' --args -- ""${X[@]}"")
+echo $GENERATED_ARRAY

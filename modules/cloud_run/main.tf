@@ -12,7 +12,7 @@ resource "google_cloud_run_service" "cloud_run" {
       #service_account_name = "fs-identity"
       #service_account_name="purplerelay-github"
       containers {
-        image = "us-east1-docker.pkg.dev/${var.project}/${var.registry_id}/${var.app_name}"
+        image = "us-east1-docker.pkg.dev/${var.project}/${var.registry_id}/${var.app_name}:latest"
         env {
           name = "BUCKET"
           value = var.bucket

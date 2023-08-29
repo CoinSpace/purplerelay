@@ -37,7 +37,7 @@ RUN set -e; \
     apt-key add -; \
     apt-get update; \
     apt-get install -y gcsfuse && apt-get clean
-ENV MNT_DIR .
+ENV MNT_DIR ./strfry-db
 
 COPY ./nginx/nginx.conf ./etc/nginx/nginx.conf
 COPY ./nginx/default.conf ./etc/nginx/sites-enabled/default.conf

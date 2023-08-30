@@ -5,7 +5,9 @@ resource "google_cloud_run_service" "cloud_run" {
   template {
     metadata {
       annotations = {
-        "run.googleapis.com/execution-environment" = "gen2"
+        "run.googleapis.com/execution-environment" = "gen2",
+        "run.googleapis.com/client-name" = "gcloud"
+        "run.googleapis.com/client-version" = "443.0.0"
       }
     }
     spec {

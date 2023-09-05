@@ -39,6 +39,9 @@ RUN set -e; \
     apt-get install -y gcsfuse && apt-get clean
 ENV MNT_DIR ./strfry-db
 
+COPY ./STAR.purplerelay.com.key /etc/ssl/STAR.purplerelay.com.key
+COPY ./ssl-bundle.crt /etc/ssl/ssl-bundle.crt
+
 COPY ./nginx/nginx.conf ./etc/nginx/nginx.conf
 COPY ./nginx/default.conf ./etc/nginx/sites-enabled/default.conf
 COPY ./run.sh ./run.sh
@@ -50,5 +53,6 @@ RUN ./setup_gcloud_cli.sh
 COPY ./application_default_credentials.json ./$HOME/.config/gcloud/application_default_credentials.json
 
 EXPOSE 80
+EXPOSE 443
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["./run.sh"]

@@ -50,5 +50,6 @@ RUN ./setup_gcloud_cli.sh
 COPY ./application_default_credentials.json ./$HOME/.config/gcloud/application_default_credentials.json
 
 EXPOSE 80
+EXPOSE 443
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["./run.sh"]

@@ -42,8 +42,12 @@ ENV MNT_DIR ./strfry-db
 COPY ./STAR.purplerelay.com.key /etc/ssl/STAR.purplerelay.com.key
 COPY ./ssl-bundle.crt /etc/ssl/ssl-bundle.crt
 
-COPY --from=build ./build/nginx/nginx.conf ./etc/nginx/nginx.conf
-COPY --from=build ./build/nginx/new.default.conf ./etc/nginx/sites-enabled/default.conf
+COPY --from=build ./build/nginx/nginx.conf ./
+COPY --from=build ./build/nginx/new.default.conf ./
+
+RUN cp -r ./nginx.conf /etc/nginx/nginx.conf
+RUN cp -r ./new.default.conf /etc/nginx/sites-enabled/default.conf
+
 # COPY ./nginx/default.conf ./etc/nginx/sites-enabled/default.conf
 COPY ./run.sh ./run.sh
 RUN chmod +x ./run.sh

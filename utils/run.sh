@@ -6,7 +6,6 @@ mkdir -p $MNT_DIR
 
 cp -r ./nginx.conf /etc/nginx/nginx.conf
 cp -r ./new.default.conf /etc/nginx/sites-enabled/default.conf
-cat /etc/nginx/sites-enabled/default.conf
 
 echo "Mounting GCS Fuse."
 gcsfuse --debug_gcs --debug_fuse $BUCKET $MNT_DIR

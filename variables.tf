@@ -30,7 +30,7 @@ variable "app_name" {
 
 variable "regions" {
   type = list(string)
-  default = ["us-east1", "us-west1", "us-central1", "southamerica-east1", "us-south1", "asia-east1"]
+  default = ["us-east1", "us-west1", "us-west2", "us-central1", "us-south1", "northamerica-northeast1", "southamerica-east1", "southamerica-west1", "asia-east1"]
 }
 
 variable "domain_url" {

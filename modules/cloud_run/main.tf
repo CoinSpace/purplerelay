@@ -6,8 +6,10 @@ resource "google_cloud_run_service" "cloud_run" {
     metadata {
       annotations = {
         "run.googleapis.com/execution-environment" = "gen2",
-        "run.googleapis.com/client-name" = "gcloud"
-        "run.googleapis.com/client-version" = "443.0.0"
+        "run.googleapis.com/client-name" = "gcloud",
+        "run.googleapis.com/client-version" = "443.0.0",
+        "autoscaling.knative.dev/minScale" = "1",
+        "autoscaling.knative.dev/maxScale" = "100",
       }
     }
     spec {
@@ -22,9 +24,16 @@ resource "google_cloud_run_service" "cloud_run" {
         ports {
           container_port = 80
         }
+        resources {
+          limits = {
+            cpu = "2000m"
+            memory = "2Gi"
+          }
+        }
       }
     }
   }
+  autogenerate_revision_name = true
   traffic {
     percent         = 100
     latest_revision = true

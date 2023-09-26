@@ -13,7 +13,7 @@ echo "Mounting completed."
 
 # Start the application
 nginx
-./strfry relay
+./app/strfry relay
 # Exit immediately when one of the background processes terminate.
 wait -n
 # [END cloudrun_fuse_script]

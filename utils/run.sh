@@ -15,6 +15,8 @@ echo "Mounting GCS Fuse."
 /go/bin/gcsfuse --debug_gcs --debug_fuse $BUCKET $MNT_DIR
 echo "Mounting completed."
 
+adduser -r nginx
+
 # Start the application
 nginx
 ./strfry relay

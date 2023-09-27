@@ -7,7 +7,10 @@ mkdir /etc/nginx/sites-enabled
 cp -r ./nginx.conf /etc/nginx/nginx.conf
 cp -r ./new.default.conf /etc/nginx/sites-enabled/default.conf
 
-ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled
+cat /etc/nginx/sites-enabled/default.conf
+cat /etc/nginx/sites-available/default.conf
+
+# ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled
 
 go install github.com/googlecloudplatform/gcsfuse@latest
 

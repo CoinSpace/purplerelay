@@ -1,11 +1,11 @@
 #!/usr/bin/env sh
 set -eo pipefail
 
-mkdir /etc/nginx/sites-available
-mkdir /etc/nginx/sites-enabled
+# mkdir /etc/nginx/sites-available
+# mkdir /etc/nginx/sites-enabled
 
-cp -r ./nginx.conf /etc/nginx/nginx.conf
-cp -r ./new.default.conf /etc/nginx/sites-enabled/default.conf
+# cp -r ./nginx.conf /etc/nginx/nginx.conf
+# cp -r ./new.default.conf /etc/nginx/sites-enabled/default.conf
 
 # ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled
 
@@ -15,7 +15,7 @@ echo "Mounting GCS Fuse."
 /go/bin/gcsfuse --debug_gcs --debug_fuse $BUCKET $MNT_DIR
 echo "Mounting completed."
 
-adduser -s /bin/false nginx
+# adduser -s /bin/false nginx
 
 # Start the application
 nginx

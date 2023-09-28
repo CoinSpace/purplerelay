@@ -1,6 +1,9 @@
-#!/bin/bash
-apt-get update
-apt-get install apt-transport-https ca-certificates gnupg curl
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-apt-get update && apt-get install google-cloud-cli
+#!/usr/bin/env sh
+set -eo pipefail
+
+wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz && \
+tar xzf google-cloud-sdk.tar.gz -C / && \
+/google-cloud-sdk/install.sh --usage-reporting false --path-update false --quiet && \
+rm google-cloud-sdk.tar.gz
+
+export PATH=/google-cloud-sdk/bin:${PATH}

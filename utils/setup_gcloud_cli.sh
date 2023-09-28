@@ -7,5 +7,3 @@ tar xzf google-cloud-sdk.tar.gz -C / && \
 rm google-cloud-sdk.tar.gz
 
 export PATH=/google-cloud-sdk/bin:${PATH}
-
-gsutil cp gs://purple_caddy/purplerelay.com/dump.jsonl.zst ./dump.json.zst

@@ -18,7 +18,7 @@ echo "Mounting completed."
 # adduser -s /bin/false nginx
 
 # Start the application
-nginx
+# nginx
 ./strfry relay
 # Exit immediately when one of the background processes terminate.
 wait -n

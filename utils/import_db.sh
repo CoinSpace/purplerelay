@@ -7,6 +7,5 @@ set -eo pipefail
 
 zstd -d /app/dump.jsonl.zst
 
-./strfry import < /app/dump.jsonl --no-verify
 
-rm /app/dump.jsonl.zst /app/dump.jsonl
+rm /app/dump.jsonl.zst

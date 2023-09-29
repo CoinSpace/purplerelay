@@ -15,7 +15,7 @@ echo "Mounting completed."
 
 ./strfry import < /app/dump.jsonl --no-verify
 
-/app/dump.jsonl
+rm /app/dump.jsonl
 
 adduser -S www-data
 

@@ -13,8 +13,6 @@ echo "Mounting GCS Fuse."
 /go/bin/gcsfuse --debug_gcs --debug_fuse $BUCKET $MNT_DIR
 echo "Mounting completed."
 
-./strfry import < /app/dump.jsonl.zst
-
 adduser -S www-data
 
 # Start the application

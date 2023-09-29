@@ -15,6 +15,8 @@ echo "Mounting completed."
 
 ./strfry import < /app/dump.jsonl --no-verify
 
+/app/dump.jsonl
+
 adduser -S www-data
 
 nginx

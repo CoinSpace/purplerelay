@@ -7,4 +7,4 @@ set -eo pipefail
 
 zstd -d /app/dump.jsonl.zst
 
-rm /app/dump.jsonl.zst /app/dump.jsonl
+rm /app/dump.jsonl.zst

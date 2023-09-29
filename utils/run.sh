@@ -13,10 +13,6 @@ echo "Mounting GCS Fuse."
 /go/bin/gcsfuse --debug_gcs --debug_fuse $BUCKET $MNT_DIR
 echo "Mounting completed."
 
-./strfry import < /app/dump.jsonl --no-verify
-
-rm /app/dump.jsonl
-
 adduser -S www-data
 
 nginx

@@ -13,3 +13,11 @@ variable "region" {
 variable "domain_url" {
   type = string
 }
+
+variable "private_key" {
+  type = string
+}
+
+variable "certificate" {
+  type = string
+}

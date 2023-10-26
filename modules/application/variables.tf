@@ -1,5 +1,5 @@
-variable "regions" {
-  type = list(string)
+variable "region" {
+  type = string
 }
 
 variable "project" {
@@ -19,5 +19,13 @@ variable "app_name" {
 }
 
 variable "domain_url" {
+  type = string
+}
+
+variable "private_key" {
+  type = string
+}
+
+variable "certificate" {
   type = string
 }

@@ -37,3 +37,13 @@ variable "domain_url" {
   type = string
   default = "purplerelay.com"
 }
+
+variable "private_key" {
+  type = string
+  default = "STAR.purplerelay.com.key"
+}
+
+variable "certificate" {
+  type = string
+  default = "ssl-bundle.crt"
+}

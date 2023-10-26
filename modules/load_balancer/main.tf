@@ -14,9 +14,10 @@ module "lb-http" {
   version           = "9.1.0"
 
   project           = var.project
-  name              = "${var.project}-${var.region}-lb-${var.environment}"
+  name              = "${var.region}"
 
-  managed_ssl_certificate_domains = ["${var.domain_url}"]
+  private_key = file(var.private_key)
+  certificate = file(var.certificate)
   ssl                             = true
   https_redirect                  = true
 

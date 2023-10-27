@@ -21,5 +21,3 @@ wait -n
 # [END cloudrun_fuse_script]
 
 ./strfry import < /app/dump.jsonl --no-verify
-
-rm /app/dump.jsonl

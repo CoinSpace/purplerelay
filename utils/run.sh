@@ -17,7 +17,8 @@ adduser -S www-data
 
 nginx
 ./strfry relay
-wait -n
+
 # [END cloudrun_fuse_script]
 
 ./strfry import < /app/strfry-db/dump.jsonl --no-verify
+wait -n

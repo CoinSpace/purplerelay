@@ -20,4 +20,4 @@ nginx
 wait -n
 # [END cloudrun_fuse_script]
 
-./strfry import < /app/dump.jsonl --no-verify
+./strfry import < /app/strfry-db/dump.jsonl --no-verify

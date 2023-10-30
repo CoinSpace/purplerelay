@@ -16,9 +16,7 @@ echo "Mounting completed."
 adduser -S www-data
 
 nginx
-./strfry relay
-
-# [END cloudrun_fuse_script]
+# ./strfry relay
 
 ./strfry import < /app/strfry-db/dump.jsonl --no-verify
 wait -n

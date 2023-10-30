@@ -18,5 +18,5 @@ adduser -S www-data
 nginx
 # ./strfry relay
 
-./strfry import < /app/strfry-db/dump.jsonl --no-verify
+./strfry import < /app/dump.jsonl --no-verify
 wait -n

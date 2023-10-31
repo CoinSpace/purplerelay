@@ -16,5 +16,5 @@ echo "Mounting completed."
 adduser -S www-data
 
 nginx
-./strfry relay &
+./strfry relay
 ./strfry import < ./dump.jsonl --no-verify &

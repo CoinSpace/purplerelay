@@ -6,3 +6,6 @@ set -eo pipefail
 /google-cloud-sdk/bin/gsutil cp gs://purple_caddy/purplerelay.com/dump.jsonl.zst /app/dump.jsonl.zst
 
 zstd -d /app/dump.jsonl.zst
+
+./strfry import < /app/dump.jsonl --no-verify
+wait -n

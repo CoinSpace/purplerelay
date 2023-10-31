@@ -7,7 +7,7 @@ resource "google_cloud_run_service" "cloud_run" {
       annotations = {
         "run.googleapis.com/execution-environment" = "gen2",
         "run.googleapis.com/client-name" = "gcloud",
-        "run.googleapis.com/client-version" = "451.0.1",
+        "run.googleapis.com/client-version" = "452.0.0",
         "run.googleapis.com/cpu-throttling" = "false",
         "run.googleapis.com/startup-cpu-boost" = "true",
         "autoscaling.knative.dev/minScale" = "1",

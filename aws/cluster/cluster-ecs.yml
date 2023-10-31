@@ -8,7 +8,7 @@ Parameters:
     Type: String
 
   KeyName:
-    Type: String
+    Type: AWS::EC2::KeyPair::KeyName
 
   AsgServiceMin:
     Type: String
@@ -20,12 +20,18 @@ Parameters:
     Type: String
 
   EcsImage:
-    Type: AWS::EC2::Image::Id
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Description: Use an Image from SSM Parameter Store
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
+
+  EbsEncrypted:
+    Type: String
+    AllowedValues:
+      - yes
+      - no
 
 Conditions:
-  isEbsEncrypted: !Equals
-    - !Ref EbsEncrypted
-    - 'yes'
+  isEbsEncrypted: !Equals [ !Ref EbsEncrypted, yes ]
 
 Resources:
   LogGroup:

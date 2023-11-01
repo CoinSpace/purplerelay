@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sets up ecs cluster vpc
+Parameters:
+  ClusterName:
+    Description: Cluster name
+    Type: String
+
+  CidrIp:
+    Description: Cidr Ip
+    Type: String
+    Default: 10.10.0.0
+
+  IpPublicSubnet:
+    Type: String
+    Default: 10.10.10.0
+
+  IpPrivateSubnet:
+    Type: String
+    Default: 10.10.30.0
+
+Resources:
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Sub '${CidrIp}/16'
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-VPC'
+
+  InternalAccessSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref VPC
+      GroupName: !Sub '${ClusterName}-AllowInternalAccess'
+      GroupDescription: Enables access to all VPC protocols and IPs
+      SecurityGroupIngress:
+        - IpProtocol: '-1'
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: !Sub '${CidrIp}/16'
+
+  InternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-IGVPC'
+
+  AttachGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Sub '${IpSubnet3}/24'
+      AvailabilityZone:
+        'Fn::Select':
+          - 1
+          - 'Fn::GetAZs': !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-PublicSubnet'
+
+  PublicRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-PublicRouteTable'
+
+  PublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateSubnet:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Sub '${IpSubnet1}/24'
+      AvailabilityZone:
+        'Fn::Select':
+          - 1
+          - 'Fn::GetAZs': !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-PrivateSubnet'
+
+  EIP:
+    Type: 'AWS::EC2::EIP'
+    DependsOn: InternetGateway
+    Properties:
+      Domain: vpc
+
+  NatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      AllocationId: !Sub '${EIP.AllocationId}'
+
+  PrivateRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-PrivateRouteTable'
+
+  PrivateRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      RouteTableId: !Ref PrivateRouteTable
+      NatGatewayId: !Ref NatGateway
+
+  PrivateSubnetAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet
+      RouteTableId: !Ref PrivateRouteTable
+
+Outputs:
+  VPC:
+    Value: !Ref VPC
+    Export:
+      Name: !Sub '${ClusterName}-VPC'
+
+  VPCCidrBlock:
+    Value: !GetAtt VPC.CidrBlock
+    Export:
+      Name: !Sub '${ClusterName}-VPCCidrBlock'
+
+  PublicSubnet:
+    Value: !Ref PublicSubnet
+    Export:
+      Name: !Sub '${ClusterName}-PublicSubnet'
+
+  PrivateSubnet:
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: !Sub '${ClusterName}-PrivateSubnet'
+
+  InternalAccessSecurityGroup:
+    Value: !Ref InternalAccessSecurityGroup
+    Export:
+      Name: !Sub '${ClusterName}-InternalAccessSecurityGroup'

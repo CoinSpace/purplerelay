@@ -84,8 +84,8 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       VpcId:
-        'Fn::ImportValue': !Sub ${ClusterName}VPC
-      GroupName: !Sub ${ClusterName}AllowSSH
+        'Fn::ImportValue': !Sub ${ClusterName}-VPC
+      GroupName: !Sub ${ClusterName}-AllowSSH
       GroupDescription: Enables access to all IPs to port 22
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -116,9 +116,9 @@ Resources:
           DeviceIndex: '0'
           GroupSet:
             - !Ref BastionSecurityGroup
-            - 'Fn::ImportValue': !Sub ${ClusterName}InternalAccessSecurityGroup
+            - 'Fn::ImportValue': !Sub ${ClusterName}-InternalAccessSecurityGroup
           SubnetId:
-            'Fn::ImportValue': !Sub ${ClusterName}PublicSubnet1
+            'Fn::ImportValue': !Sub ${ClusterName}-PublicSubnet
       ImageId: !Ref EcsImage
       InstanceType: t3a.micro
       KeyName: !Ref KeyName
@@ -137,7 +137,7 @@ Resources:
       KeyName: !Ref KeyName
       ImageId: !Ref EcsImage
       SecurityGroups:
-        - 'Fn::ImportValue': !Sub ${ClusterName}InternalAccessSecurityGroup
+        - 'Fn::ImportValue': !Sub ${ClusterName}-InternalAccessSecurityGroup
       InstanceType: !Ref ECSInstanceType
       BlockDeviceMappings:
         - DeviceName: "/dev/xvda"
@@ -168,17 +168,16 @@ Resources:
     Properties:
       Tags:
         - Key: Name
-          Value: !Sub ${ClusterName} cluster
+          Value: !Sub ${ClusterName}-cluster
           PropagateAtLaunch: true
       LaunchConfigurationName: !Ref LaunchConfiguration
       MinSize: !Ref AsgServiceMin
       DesiredCapacity: !Ref AsgServiceDesired
       MaxSize: !Ref AsgServiceMax
       TargetGroupARNs:
-        - 'Fn::ImportValue': !Sub ${ClusterName}BackendAlbDefaultTargetGroup
+        - 'Fn::ImportValue': !Sub ${ClusterName}-BackendAlbDefaultTargetGroup
       VPCZoneIdentifier:
-        - 'Fn::ImportValue': !Sub ${ClusterName}PrivateSubnet1
-        - 'Fn::ImportValue': !Sub ${ClusterName}PrivateSubnet2
+        - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MaxBatchSize: 1

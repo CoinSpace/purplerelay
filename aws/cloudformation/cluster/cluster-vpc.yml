@@ -82,7 +82,7 @@ Resources:
       CidrBlock: !Sub '${IpPublicSubnet2}/24'
       AvailabilityZone:
         'Fn::Select':
-          - 1
+          - 2
           - 'Fn::GetAZs': !Ref 'AWS::Region'
       Tags:
         - Key: Name
@@ -122,7 +122,7 @@ Resources:
       CidrBlock: !Sub '${IpPrivateSubnet1}/24'
       AvailabilityZone:
         'Fn::Select':
-          - 1
+          - 2
           - 'Fn::GetAZs': !Ref 'AWS::Region'
       Tags:
         - Key: Name

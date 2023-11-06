@@ -34,7 +34,8 @@ Resources:
       Type: application
       Scheme: internet-facing
       Subnets:
-        - 'Fn::ImportValue': !Sub ${ClusterName}-PublicSubnet
+        - 'Fn::ImportValue': !Sub ${ClusterName}-PublicSubnet1
+        - 'Fn::ImportValue': !Sub ${ClusterName}-PublicSubnet2
       SecurityGroups:
         - !Ref LoadBalancerSecurityGroup
         - 'Fn::ImportValue': !Sub ${ClusterName}-InternalAccessSecurityGroup

@@ -118,7 +118,7 @@ Resources:
             - !Ref BastionSecurityGroup
             - 'Fn::ImportValue': !Sub ${ClusterName}-InternalAccessSecurityGroup
           SubnetId:
-            'Fn::ImportValue': !Sub ${ClusterName}-PublicSubnet
+            'Fn::ImportValue': !Sub ${ClusterName}-PublicSubnet1
       ImageId: !Ref EcsImage
       InstanceType: t3a.micro
       KeyName: !Ref KeyName
@@ -177,7 +177,8 @@ Resources:
       TargetGroupARNs:
         - 'Fn::ImportValue': !Sub ${ClusterName}-BackendAlbDefaultTargetGroup
       VPCZoneIdentifier:
-        - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet
+        - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet1
+        - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet2
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MaxBatchSize: 1

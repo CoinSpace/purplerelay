@@ -1,18 +1,14 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Sets up ecs cluster elb
+Description: Create a pipeline on codepipeline that builds all resources and updates the ecs service
 Parameters:
-  Provider:
-    Type: String
-
   ProviderRepo:
     Type: String
 
   ProviderBranch:
     Type: String
 
-  ProviderToken:
+  ConnectionArn:
     Type: String
-    NoEcho: true
 
   Owner:
     Type: String
@@ -164,13 +160,12 @@ Resources:
                 Category: Source
                 Owner: ThirdParty
                 Version: '1'
-                Provider: !Ref Provider
+                Provider: CodeStarSourceConnection
               Configuration:
-                Owner: !Ref Owner
-                Repo: !Ref ProviderRepo
+                ConnectionArn: !Ref ConnectionArn
                 Branch: !Ref ProviderBranch
-                OAuthToken: !Ref ProviderToken
-                PollForSourceChanges: false
+                FullRepositoryId: !Join [ "/", [ !Ref "Owner", !Ref "ProviderRepo" ] ]
+                DetectChanges: false
               OutputArtifacts:
                 - Name: Infra
               RunOrder: 1

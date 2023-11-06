@@ -10,13 +10,21 @@ Parameters:
     Type: String
     Default: 10.10.0.0
 
-  IpPublicSubnet:
+  IpPublicSubnet1:
     Type: String
     Default: 10.10.10.0
 
-  IpPrivateSubnet:
+  IpPublicSubnet2:
+    Type: String
+    Default: 10.10.20.0
+
+  IpPrivateSubnet1:
     Type: String
     Default: 10.10.30.0
+
+  IpPrivateSubnet2:
+    Type: String
+    Default: 10.10.40.0
 
 Resources:
   VPC:
@@ -54,18 +62,31 @@ Resources:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
 
-  PublicSubnet:
+  PublicSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: !Sub '${IpSubnet3}/24'
+      CidrBlock: !Sub '${IpPublicSubnet1}/24'
       AvailabilityZone:
         'Fn::Select':
           - 1
           - 'Fn::GetAZs': !Ref 'AWS::Region'
       Tags:
         - Key: Name
-          Value: !Sub '${ClusterName}-PublicSubnet'
+          Value: !Sub '${ClusterName}-PublicSubnet1'
+
+  PublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Sub '${IpPublicSubnet2}/24'
+      AvailabilityZone:
+        'Fn::Select':
+          - 1
+          - 'Fn::GetAZs': !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-PublicSubnet2'
 
   PublicRouteTable:
     Type: 'AWS::EC2::RouteTable'
@@ -82,24 +103,43 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
-  PublicSubnetAssociation:
+  PublicSubnet1Association:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      SubnetId: !Ref PublicSubnet
+      SubnetId: !Ref PublicSubnet1
       RouteTableId: !Ref PublicRouteTable
 
-  PrivateSubnet:
+  PublicSubnet2Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: !Sub '${IpSubnet1}/24'
+      CidrBlock: !Sub '${IpPrivateSubnet1}/24'
       AvailabilityZone:
         'Fn::Select':
           - 1
           - 'Fn::GetAZs': !Ref 'AWS::Region'
       Tags:
         - Key: Name
-          Value: !Sub '${ClusterName}-PrivateSubnet'
+          Value: !Sub '${ClusterName}-PrivateSubnet1'
+
+  PrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Sub '${IpPrivateSubnet2}/24'
+      AvailabilityZone:
+        'Fn::Select':
+          - 1
+          - 'Fn::GetAZs': !Ref 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-PrivateSubnet2'
 
   EIP:
     Type: 'AWS::EC2::EIP'
@@ -110,7 +150,7 @@ Resources:
   NatGateway:
     Type: 'AWS::EC2::NatGateway'
     Properties:
-      SubnetId: !Ref PublicSubnet
+      SubnetId: !Ref PublicSubnet1
       AllocationId: !Sub '${EIP.AllocationId}'
 
   PrivateRouteTable:
@@ -128,10 +168,16 @@ Resources:
       RouteTableId: !Ref PrivateRouteTable
       NatGatewayId: !Ref NatGateway
 
-  PrivateSubnetAssociation:
+  PrivateSubnet1Association:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      SubnetId: !Ref PrivateSubnet
+      SubnetId: !Ref PrivateSubnet1
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnet2Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref PrivateSubnet2
       RouteTableId: !Ref PrivateRouteTable
 
 Outputs:
@@ -145,15 +191,25 @@ Outputs:
     Export:
       Name: !Sub '${ClusterName}-VPCCidrBlock'
 
-  PublicSubnet:
-    Value: !Ref PublicSubnet
+  PublicSubnet1:
+    Value: !Ref PublicSubnet1
     Export:
-      Name: !Sub '${ClusterName}-PublicSubnet'
+      Name: !Sub '${ClusterName}-PublicSubnet1'
 
-  PrivateSubnet:
-    Value: !Ref PrivateSubnet
+  PublicSubnet2:
+    Value: !Ref PublicSubnet2
     Export:
-      Name: !Sub '${ClusterName}-PrivateSubnet'
+      Name: !Sub '${ClusterName}-PublicSubnet2'
+
+  PrivateSubnet1:
+    Value: !Ref PrivateSubnet1
+    Export:
+      Name: !Sub '${ClusterName}-PrivateSubnet1'
+
+  PrivateSubnet2:
+    Value: !Ref PrivateSubnet2
+    Export:
+      Name: !Sub '${ClusterName}-PrivateSubnet2'
 
   InternalAccessSecurityGroup:
     Value: !Ref InternalAccessSecurityGroup

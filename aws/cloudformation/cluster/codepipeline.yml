@@ -121,13 +121,6 @@ Resources:
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              - Resource: arn:aws:s3:::*
-                Effect: Allow
-                Action:
-                  - s3:PutObject
-                  - s3:GetObject
-                  - s3:GetObjectVersion
-                  - s3:GetBucketVersioning
               - Resource: "*"
                 Effect: Allow
                 Action:
@@ -139,6 +132,8 @@ Resources:
                   - iam:PassRole
                   - secretsmanager:*
                   - ec2:*
+                  - s3:*
+                  - codestar-connections:*
 
   ArtifactBucket:
     Type: AWS::S3::Bucket

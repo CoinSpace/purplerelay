@@ -180,7 +180,7 @@ Resources:
                 ActionMode: CHANGE_SET_REPLACE
                 StackName: !Sub cluster-${ClusterName}-vpc
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: Infra::aws/cluster/cluster-vpc.yml
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-vpc.yml
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 ParameterOverrides: !Sub |
                   {
@@ -214,14 +214,14 @@ Resources:
                 ActionMode: CHANGE_SET_REPLACE
                 StackName: !Sub cluster-${ClusterName}-elb
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: Infra::aws/cluster/cluster-elb.yml
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-elb.yml
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 ParameterOverrides: !Sub |
                   {
                     "ClusterName": "${ClusterName}",
                     "DefaultAcmCertificateArn": "${DefaultAcmCertificateArn}"
                   }
-              RunOrder: 2
+              RunOrder: 4
               InputArtifacts:
                 - Name: Infra
 
@@ -236,7 +236,7 @@ Resources:
                 ActionMode: CHANGE_SET_EXECUTE
                 StackName: !Sub cluster-${ClusterName}-elb
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
-              RunOrder: 3
+              RunOrder: 5
 
             - Name: CreateECSChangeSet
               ActionTypeId:
@@ -249,7 +249,7 @@ Resources:
                 ActionMode: CHANGE_SET_REPLACE
                 StackName: !Sub cluster-${ClusterName}-ecs
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: Infra::aws/cluster/cluster-ecs.yml
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-ecs.yml
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 ParameterOverrides: !Sub |
                   {
@@ -261,7 +261,7 @@ Resources:
                     "AsgServiceDesired": "${AsgServiceDesired}",
                     "EcsImage": "${EcsImage}"
                   }
-              RunOrder: 2
+              RunOrder: 6
               InputArtifacts:
                 - Name: Infra
 
@@ -276,7 +276,7 @@ Resources:
                 ActionMode: CHANGE_SET_EXECUTE
                 StackName: !Sub cluster-${ClusterName}-ecs
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
-              RunOrder: 3
+              RunOrder: 7
 
             - Name: CreateAlarmsChangeSet
               ActionTypeId:
@@ -289,13 +289,13 @@ Resources:
                 ActionMode: CHANGE_SET_REPLACE
                 StackName: !Sub cluster-${ClusterName}-alarms
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: Infra::aws/cluster/cluster-alarms.yml
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-alarms.yml
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 ParameterOverrides: !Sub |
                   {
                     "ClusterName": "${ClusterName}"
                   }
-              RunOrder: 2
+              RunOrder: 8
               InputArtifacts:
                 - Name: Infra
 
@@ -310,7 +310,7 @@ Resources:
                 ActionMode: CHANGE_SET_EXECUTE
                 StackName: !Sub cluster-${ClusterName}-alarms
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
-              RunOrder: 3
+              RunOrder: 9
 
 Outputs:
   PipelineUrl:

@@ -13,6 +13,8 @@ Parameters:
   Owner:
     Type: String
 
+  DefaultAcmCertificateArn:
+    Type: String
 ######## Cluster parameters ########
   ClusterName:
     Type: String
@@ -158,7 +160,7 @@ Resources:
             - Name: Infra
               ActionTypeId:
                 Category: Source
-                Owner: ThirdParty
+                Owner: AWS
                 Version: '1'
                 Provider: CodeStarSourceConnection
               Configuration:
@@ -221,7 +223,8 @@ Resources:
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 ParameterOverrides: !Sub |
                   {
-                    "ClusterName": "${ClusterName}"
+                    "ClusterName": "${ClusterName}",
+                    "DefaultAcmCertificateArn": "${DefaultAcmCertificateArn}"
                   }
               RunOrder: 2
               InputArtifacts:

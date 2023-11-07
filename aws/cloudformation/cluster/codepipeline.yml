@@ -165,7 +165,7 @@ Resources:
                 Provider: CodeStarSourceConnection
               Configuration:
                 ConnectionArn: !Ref ConnectionArn
-                Branch: !Ref ProviderBranch
+                BranchName: !Ref ProviderBranch
                 FullRepositoryId: !Join [ "/", [ !Ref "Owner", !Ref "ProviderRepo" ] ]
                 DetectChanges: false
               OutputArtifacts:

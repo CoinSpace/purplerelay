@@ -39,3 +39,4 @@ terraform.rc
 *.key
 *.txt
 *.pdf
+*.pem

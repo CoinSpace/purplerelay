@@ -145,7 +145,7 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties: 
-      BucketName: !Sub ${ClusterName}-cluster
+      BucketName: !Sub ${ClusterName}-cluster-artifact
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline

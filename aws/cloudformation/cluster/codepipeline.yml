@@ -37,6 +37,12 @@ Parameters:
   EcsImage:
     Type: String
 
+  EbsEncrypted:
+    Type: String
+    AllowedValues:
+      - yes
+      - no
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -139,7 +145,7 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties: 
-      BucketName: !Sub ${ClusterName}-artifacts
+      BucketName: !Sub ${ClusterName}-cluster
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
@@ -259,7 +265,8 @@ Resources:
                     "AsgServiceMin": "${AsgServiceMin}",
                     "AsgServiceMax": "${AsgServiceMax}",
                     "AsgServiceDesired": "${AsgServiceDesired}",
-                    "EcsImage": "${EcsImage}"
+                    "EcsImage": "${EcsImage}",
+                    "EbsEncrypted": "${EbsEncrypted}"
                   }
               RunOrder: 6
               InputArtifacts:

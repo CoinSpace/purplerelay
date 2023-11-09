@@ -9,7 +9,9 @@ phases:
       - IMAGE_TAG=${TAG:=latest}
   pre_build:
     commands:
+      - git clone -b feature/update-nginx https://github.com/purplerelay/strfry.git /var/tmp
       - cp -r $CODEBUILD_SRC_DIR_App/. .
+      - cp -r /var/tmp/.git .
       - cp aws/docker/Dockerfile .
       - cp aws/nginx/* .
       - cp aws/scripts/*.sh .

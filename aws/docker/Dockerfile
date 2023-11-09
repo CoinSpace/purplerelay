@@ -30,7 +30,7 @@ RUN \
     nginx \
   && rm -rf /var/cache/apk/* \
   && cpanm Regexp::Grammars \
-  # && git submodule update --init \
+  && git submodule update --init \
   && make setup-golpe \
   && make -j4
 

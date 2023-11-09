@@ -153,7 +153,7 @@ Resources:
         - TargetGroupArn: !Ref TargetGroup
           Type: forward
 
-  serviceECSServiceWEB:
+  Service:
     Type: AWS::ECS::Service
     DependsOn:
       - TargetGroup
@@ -242,73 +242,7 @@ Resources:
             Retries: !Ref ContainerHealthCheckRetries
             StartPeriod: !Ref ContainerHealthCheckStartPeriod
 
-  WebScalableTarget:
-    DependsOn:
-      - TargetGroup
-      - ListenerCertificate
-      - SiteNameListenerRule
-    Type: AWS::ApplicationAutoScaling::ScalableTarget
-    DependsOn: serviceECSServiceWEB
-    Properties:
-      MaxCapacity: !Ref MaxCapacity
-      MinCapacity: !Ref MinCapacity
-      ResourceId: !Sub service/${ClusterName}/${serviceECSServiceWEB.Name}
-      RoleARN:
-        'Fn::ImportValue': !Sub ${ClusterName}-ECSRoleArn
-      ScalableDimension: ecs:service:DesiredCount
-      ServiceNamespace: ecs
-
-  WebEcsScaleOutPolicy:
-    Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    DependsOn:
-      - TargetGroup
-      - ListenerCertificate
-      - SiteNameListenerRule
-    Properties:
-      PolicyName: !Sub ${ClusterName}__WebEcsScaleOut
-      PolicyType: StepScaling
-      ScalingTargetId: !Ref WebScalableTarget
-      ScalableDimension: ecs:service:DesiredCount
-      ServiceNamespace: ecs
-      StepScalingPolicyConfiguration:
-        AdjustmentType: ChangeInCapacity
-        Cooldown: 300
-        MetricAggregationType: Average
-        StepAdjustments:
-          - MetricIntervalLowerBound: 0
-            ScalingAdjustment: 1
-
-  WebEcsScaleInPolicy:
-    Type: AWS::ApplicationAutoScaling::ScalingPolicy
-    DependsOn:
-      - TargetGroup
-      - ListenerCertificate
-      - SiteNameListenerRule
-    Properties:
-      PolicyName: !Sub ${ClusterName}__WebEcsScaleIn
-      PolicyType: StepScaling
-      ScalingTargetId: !Ref WebScalableTarget
-      ScalableDimension: ecs:service:DesiredCount
-      ServiceNamespace: ecs
-      StepScalingPolicyConfiguration:
-        AdjustmentType: ChangeInCapacity
-        Cooldown: 600
-        MetricAggregationType: Average
-        StepAdjustments:
-          - MetricIntervalUpperBound: 0
-            ScalingAdjustment: -1
-
 Outputs:
-  WebEcsScaleOutPolicy:
-    Value: !Ref WebEcsScaleOutPolicy
-    Export:
-      Name: !Sub ${ClusterName}-WebEcsScaleOut
-
-  WebEcsScaleInPolicy:
-    Value: !Ref WebEcsScaleInPolicy
-    Export:
-      Name: !Sub ${ClusterName}-WebEcsScaleIn
-
   TargetGroup:
     Value: !Ref TargetGroup
     Export:
@@ -318,3 +252,8 @@ Outputs:
     Value: !Sub ${TargetGroup.TargetGroupFullName}
     Export:
       Name: !Sub ${ClusterName}-TargetGroupFullName
+
+  serviceECS:
+    Value: !Ref Service
+    Export:
+      Name: !Sub ${ClusterName}-serviceECS

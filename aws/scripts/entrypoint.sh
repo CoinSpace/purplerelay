@@ -13,4 +13,3 @@ adduser -S www-data
 
 nginx
 ./strfry relay
-./strfry import < ./dump.jsonl --no-verify &

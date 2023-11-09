@@ -16,7 +16,7 @@ Parameters:
 
   AlbHealthCheckInterval:
     Type: String
-    Default: 20
+    Default: 30
 
   AlbHealthCheckPath:
     Type: String
@@ -28,11 +28,11 @@ Parameters:
 
   AlbHealthCheckHealthyThreshold:
     Type: String
-    Default: 2
+    Default: 10
 
   AlbHealthCheckUnhealthyThreshold:
     Type: String
-    Default: 2
+    Default: 10
 
   HasHTTPS:
     Type: String

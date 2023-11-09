@@ -10,9 +10,9 @@ phases:
   pre_build:
     commands:
       - cp -r $CODEBUILD_SRC_DIR_App/. .
-      - cp docker/Dockerfile .
-      - cp nginx/* .
-      - cp scripts/*.sh .
+      - cp aws/docker/Dockerfile .
+      - cp aws/nginx/* .
+      - cp aws/scripts/*.sh .
       - docker pull $REPOSITORY_URI:latest || true
   build:
     commands:

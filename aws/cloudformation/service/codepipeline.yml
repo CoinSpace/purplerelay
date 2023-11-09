@@ -21,6 +21,12 @@ Parameters:
   InfraBranch:
     Type: String
 
+  DockerLogin:
+    Type: String
+
+  DockerLoginKey:
+    Type: String
+
 ######## Cluster parameters ########
   ClusterName:
     Type: String
@@ -273,6 +279,10 @@ Resources:
             Value: !Ref AWS::AccountId
           - Name: REPOSITORY_URI
             Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
+          - Name: DOCKER_LOGIN
+            Value: !Sub ${DockerLogin}
+          - Name: DOCKER_LOGIN_KEY
+            Value: !Sub ${DockerLoginKey}
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline

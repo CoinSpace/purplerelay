@@ -63,7 +63,7 @@ Parameters:
 
   AlbHealthCheckStartPeriod:
     Type: String
-    Default: 5
+    Default: 30
 
   ContainerNetworkMode:
     Type: String
@@ -85,11 +85,11 @@ Parameters:
 
   EcsTypePlacementStrategy:
     Type: String
-    Default: spread
+    Default: binpack
 
   EcsFieldPlacementStrategy:
     Type: String
-    Default: instanceId
+    Default: cpu
 
   MaxCapacity:
     Type: String

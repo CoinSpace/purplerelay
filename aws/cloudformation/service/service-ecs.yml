@@ -114,7 +114,7 @@ Resources:
       TargetType: !If [ hasServiceDiscovery, "ip", "instance" ]
       Port: !Ref ContainerPort
       Matcher:
-        HttpCode: '200,302'
+        HttpCode: '200-499'
       HealthCheckIntervalSeconds: !Ref AlbHealthCheckInterval
       HealthCheckPath: !Ref AlbHealthCheckPath
       HealthCheckProtocol: HTTP

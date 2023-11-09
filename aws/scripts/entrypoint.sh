@@ -12,4 +12,4 @@ ln -s /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 adduser -S www-data
 
 nginx -g "daemon off;"
-./strfry relay
+./strfry relay &

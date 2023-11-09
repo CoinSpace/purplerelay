@@ -30,7 +30,7 @@ RUN \
     nginx \
   && rm -rf /var/cache/apk/* \
   && cpanm Regexp::Grammars \
-  && git submodule update --init \
+  # && git submodule update --init \
   && make setup-golpe \
   && make -j4
 
@@ -64,10 +64,10 @@ RUN \
 
 COPY --from=build /build/strfry strfry
 
-COPY --from=build ./build/nginx/nginx.conf ./
-COPY --from=build ./build/nginx/new.default.conf ./
+COPY --from=build ./build/nginx.conf ./
+COPY --from=build ./build/new.default.conf ./
 RUN mkdir -p /var/www/media
-COPY --from=build ./build/nginx/favicon.ico /var/www/media/favicon.ico
+COPY --from=build ./build/favicon.ico /var/www/media/favicon.ico
 
 COPY ./strfry.conf /etc/strfry.conf
 COPY ./strfry-db ./strfry-db

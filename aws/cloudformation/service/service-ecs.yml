@@ -1,0 +1,300 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sets Up Service Web
+Parameters:
+  ClusterName:
+    Type: String
+
+  SiteName:
+    Type: String
+
+  DefaultAcmCertificateArn:
+    Type: String
+
+  ContainerPort:
+    Type: String
+    Default: 80
+
+  AlbHealthCheckInterval:
+    Type: String
+    Default: 20
+
+  AlbHealthCheckPath:
+    Type: String
+    Default: /
+
+  AlbHealthCheckTimeout:
+    Type: String
+    Default: 10
+
+  AlbHealthCheckHealthyThreshold:
+    Type: String
+    Default: 2
+
+  AlbHealthCheckUnhealthyThreshold:
+    Type: String
+    Default: 2
+
+  HasHTTPS:
+    Type: String
+
+  SiteTgPriority:
+    Type: String
+
+  EcsTasksNumber:
+    Type: String
+
+  ContainerVirtualCPUs:
+    Type: String
+    Default: 128
+
+  ContainerMemoryMin:
+    Type: String
+    Default: 128
+
+  ContainerMemoryMax:
+    Type: String
+    Default: LIMITLESS
+
+  DockerImageVersion:
+    Type: String
+
+  GitCommit:
+    Type: String
+
+  AlbHealthCheckStartPeriod:
+    Type: String
+    Default: 5
+
+  ContainerNetworkMode:
+    Type: String
+    Default: bridge
+
+  EcsTypePlacementStrategy:
+    Type: String
+    Default: spread
+
+  EcsFieldPlacementStrategy:
+    Type: String
+    Default: instanceId
+
+  MaxCapacity:
+    Type: String
+
+  MinCapacity:
+    Type: String
+
+Conditions:
+  hasSSL: !Equals [!Ref HasHTTPS, "true"]
+  hasServiceDiscovery: !Equals [!Ref ContainerNetworkMode, "awsvpc"]
+  hasOnlyOneTask: !Equals [!Ref EcsTasksNumber, "1"]
+  containerHasMemoryLimit: !Not [!Equals [!Ref ContainerMemoryMax, "LIMITLESS"]]
+
+Resources:
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub ${ClusterName}-tg-web
+      VpcId:
+        'Fn::ImportValue': !Sub ${ClusterName}-VPC
+      Protocol: HTTP
+      TargetType: !If [ hasServiceDiscovery, "ip", "instance" ]
+      Port: !Ref ContainerPort
+      Matcher:
+        HttpCode: '200,302'
+      HealthCheckIntervalSeconds: !Ref AlbHealthCheckInterval
+      HealthCheckPath: !Ref AlbHealthCheckPath
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: !Ref AlbHealthCheckTimeout
+      HealthyThresholdCount: !Ref AlbHealthCheckHealthyThreshold
+      UnhealthyThresholdCount: !Ref AlbHealthCheckUnhealthyThreshold
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: '30'
+        - Key: stickiness.enabled
+          Value: 'true'
+
+  ListenerCertificate:
+    Type: AWS::ElasticLoadBalancingV2::ListenerCertificate
+    Condition: hasSSL
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref DefaultAcmCertificateArn
+      ListenerArn:
+        'Fn::ImportValue': !Sub ${ClusterName}-BackendAlbListenerForHttps
+
+  SiteNameListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn:
+        !If
+          - hasSSL
+          - 'Fn::ImportValue': !Sub ${ClusterName}-BackendAlbListenerForHttps
+          - 'Fn::ImportValue': !Sub ${ClusterName}-BackendAlbListenerForHttp
+      Priority: !Ref SiteTgPriority
+      Conditions:
+        - Field: host-header
+          Values:
+            - !Ref SiteName
+      Actions:
+        - TargetGroupArn: !Ref TargetGroup
+          Type: forward
+
+  serviceECSServiceWEB:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - TargetGroup
+      - ListenerCertificate
+      - SiteNameListenerRule
+    Properties:
+      ServiceName: !Sub ${ClusterName}
+      Cluster:
+        'Fn::ImportValue': !Sub ${ClusterName}-ECSCluster
+      Role:
+        'Fn::ImportValue': !Sub ${ClusterName}-ECSRoleArn
+      TaskDefinition: !Ref servicetaskdefinitionWEB
+      DesiredCount: !Ref EcsTasksNumber
+      DeploymentConfiguration:
+        MinimumHealthyPercent: !If [hasOnlyOneTask, 0, 100]
+        MaximumPercent: 200
+      LoadBalancers:
+        -
+          ContainerName: !Sub Application__${ClusterName}
+          ContainerPort: !Ref ContainerPort
+          TargetGroupArn: !Ref TargetGroup
+      HealthCheckGracePeriodSeconds: !Ref AlbHealthCheckStartPeriod
+      PlacementStrategies:
+        -
+          Type: !Sub ${EcsTypePlacementStrategy}
+          Field: !Sub ${EcsFieldPlacementStrategy}
+      PlacementConstraints:
+        -
+          Type: memberOf
+          Expression: "attribute:cluster_type == web"
+
+  servicetaskdefinitionWEB:
+    Type: AWS::ECS::TaskDefinition
+    DependsOn:
+      - TargetGroup
+      - ListenerCertificate
+      - SiteNameListenerRule
+    Properties:
+      Volumes:
+        -
+          Name: data
+          Host:
+            SourcePath: "/data"
+        -
+          Name: dockerSocket
+          Host:
+            SourcePath: "/var/run/docker.sock"
+      Family: !Sub ${ClusterName}
+      NetworkMode: !Ref ContainerNetworkMode
+      Memory: !If [containerHasMemoryLimit, !Ref ContainerMemoryMax, !Ref 'AWS::NoValue']
+      Cpu: !Ref ContainerVirtualCPUs
+      ContainerDefinitions:
+        -
+          Name: !Sub Application__${ClusterName}
+          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ClusterName}:${DockerImageVersion}
+          PortMappings:
+            -
+              HostPort: 0
+              ContainerPort: !Ref ContainerPort
+          Essential: true
+          MemoryReservation: !Ref ContainerMemoryMin
+          Memory: !If [containerHasMemoryLimit, !Ref ContainerMemoryMax, !Ref 'AWS::NoValue']
+          Cpu: !Ref ContainerVirtualCPUs
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Sub /ecs-cluster/${ClusterName}
+              awslogs-stream-prefix: /ecs-task-output
+              awslogs-region: !Ref AWS::Region
+          Ulimits:
+            -
+              HardLimit: 90000
+              Name: nofile
+              SoftLimit: 90000
+          Command:
+            - bash
+            - -c
+            - "./entrypoint.sh"
+          Environment:
+            - Name: GIT_COMMIT
+              Value: !Ref GitCommit
+
+  WebScalableTarget:
+    DependsOn:
+      - TargetGroup
+      - ListenerCertificate
+      - SiteNameListenerRule
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn: serviceECSServiceWEB
+    Properties:
+      MaxCapacity: !Ref MaxCapacity
+      MinCapacity: !Ref MinCapacity
+      ResourceId: !Sub service/${ClusterName}/${serviceECSServiceWEB.Name}
+      RoleARN:
+        'Fn::ImportValue': !Sub ${ClusterName}-ECSRoleArn
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+
+  WebEcsScaleOutPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn:
+      - TargetGroup
+      - ListenerCertificate
+      - SiteNameListenerRule
+    Properties:
+      PolicyName: !Sub ${ClusterName}__WebEcsScaleOut
+      PolicyType: StepScaling
+      ScalingTargetId: !Ref WebScalableTarget
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+      StepScalingPolicyConfiguration:
+        AdjustmentType: ChangeInCapacity
+        Cooldown: 300
+        MetricAggregationType: Average
+        StepAdjustments:
+          - MetricIntervalLowerBound: 0
+            ScalingAdjustment: 1
+
+  WebEcsScaleInPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    DependsOn:
+      - TargetGroup
+      - ListenerCertificate
+      - SiteNameListenerRule
+    Properties:
+      PolicyName: !Sub ${ClusterName}__WebEcsScaleIn
+      PolicyType: StepScaling
+      ScalingTargetId: !Ref WebScalableTarget
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+      StepScalingPolicyConfiguration:
+        AdjustmentType: ChangeInCapacity
+        Cooldown: 600
+        MetricAggregationType: Average
+        StepAdjustments:
+          - MetricIntervalUpperBound: 0
+            ScalingAdjustment: -1
+
+Outputs:
+  WebEcsScaleOutPolicy:
+    Value: !Ref WebEcsScaleOutPolicy
+    Export:
+      Name: !Sub ${ClusterName}-WebEcsScaleOut
+
+  WebEcsScaleInPolicy:
+    Value: !Ref WebEcsScaleInPolicy
+    Export:
+      Name: !Sub ${ClusterName}-WebEcsScaleIn
+
+  TargetGroup:
+    Value: !Ref TargetGroup
+    Export:
+      Name: !Sub ${ClusterName}-tg
+
+  TargetGroupFullName:
+    Value: !Sub ${TargetGroup.TargetGroupFullName}
+    Export:
+      Name: !Sub ${ClusterName}-TargetGroupFullName

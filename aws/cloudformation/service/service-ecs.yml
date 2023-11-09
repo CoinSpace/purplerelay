@@ -194,7 +194,7 @@ Resources:
       ContainerDefinitions:
         -
           Name: !Sub Application__${ClusterName}
-          Image: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ClusterName}:${DockerImageVersion}
+          Image: !Sub ${DockerImageVersion}
           PortMappings:
             -
               HostPort: 0

@@ -248,11 +248,11 @@ Resources:
       - ListenerCertificate
       - SiteNameListenerRule
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    DependsOn: serviceECSServiceWEB
+    DependsOn: Service
     Properties:
       MaxCapacity: !Ref MaxCapacity
       MinCapacity: !Ref MinCapacity
-      ResourceId: !Sub service/${ClusterName}/${serviceECSServiceWEB.Name}
+      ResourceId: !Sub service/${ClusterName}/${Service.Name}
       RoleARN:
         'Fn::ImportValue': !Sub ${ClusterName}-ECSRoleArn
       ScalableDimension: ecs:service:DesiredCount

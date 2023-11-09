@@ -215,7 +215,7 @@ Resources:
               Name: nofile
               SoftLimit: 90000
           Command:
-            - bash
+            - sh
             - -c
             - "./entrypoint.sh"
           Environment:

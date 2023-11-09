@@ -191,7 +191,7 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref AutoScalingGroup
-      Cooldown: '300'
+      Cooldown: 1
       ScalingAdjustment: 1
 
   ScaleDownPolicy:
@@ -199,7 +199,7 @@ Resources:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref AutoScalingGroup
-      Cooldown: '600'
+      Cooldown: 1
       ScalingAdjustment: -1
 
 Outputs:

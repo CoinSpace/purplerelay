@@ -18,7 +18,7 @@ phases:
       - docker pull $REPOSITORY_URI:latest || true
   build:
     commands:
-      - docker build --cache-from $REPOSITORY_URI:latest --build-arg=AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION --build-arg=AWS_ACCOUNT_ID=$AWS_ACCOUNT_ID --tag $REPOSITORY_URI:latest .
+      - docker build --cache-from $REPOSITORY_URI:latest --tag $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
   post_build:
     commands:

@@ -65,7 +65,7 @@ RUN \
 COPY --from=build /build/strfry strfry
 
 COPY --from=build ./build/nginx.conf ./
-COPY --from=build ./build/new.default.conf ./
+COPY --from=build ./build/default.conf ./
 RUN mkdir -p /var/www/media
 COPY --from=build ./build/favicon.ico /var/www/media/favicon.ico
 

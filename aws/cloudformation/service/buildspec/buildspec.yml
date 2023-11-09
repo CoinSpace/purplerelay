@@ -5,7 +5,7 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - TAG=$(date +%T | tr ':' '-')
+      - TAG=$(echo `date +%s` | cut -c 1-7)
       - IMAGE_TAG=${TAG:=latest}
   pre_build:
     commands:
@@ -24,7 +24,7 @@ phases:
     commands:
       - docker push $REPOSITORY_URI:$IMAGE_TAG || true
       - docker push $REPOSITORY_URI:latest
-      - printf '{"tag":"%s"}' "$IMAGE_TAG" > /tmp/build.json
+      - printf '{"tag":"%s:%s"}' "$REPOSITORY_URI" "$IMAGE_TAG" > /tmp/build.json
 artifacts:
   files:
     - /tmp/build.json

@@ -69,6 +69,20 @@ Parameters:
     Type: String
     Default: bridge
 
+  ContainerHealthCheckInterval:
+    Type: String
+    Default: 30
+
+  ContainerHealthCheckTimeout:
+    Type: String
+    Default: 10
+  ContainerHealthCheckRetries:
+    Type: String
+    Default: 5
+  ContainerHealthCheckStartPeriod:
+    Type: String
+    Default: 200
+
   EcsTypePlacementStrategy:
     Type: String
     Default: spread
@@ -221,6 +235,12 @@ Resources:
           Environment:
             - Name: GIT_COMMIT
               Value: !Ref GitCommit
+          HealthCheck:
+            Command: ["CMD-SHELL", "ps ax | grep -v grep | grep relay > /dev/null"]
+            Interval: !Ref ContainerHealthCheckInterval
+            Timeout: !Ref ContainerHealthCheckTimeout
+            Retries: !Ref ContainerHealthCheckRetries
+            StartPeriod: !Ref ContainerHealthCheckStartPeriod
 
   WebScalableTarget:
     DependsOn:

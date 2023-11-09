@@ -49,11 +49,11 @@ Resources:
       Port: 80
       Protocol: HTTP
       Matcher:
-        HttpCode: '301,200'
-      HealthCheckIntervalSeconds: 300
+        HttpCode: '200-499'
+      HealthCheckIntervalSeconds: 10
       HealthCheckPath: /
       HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 120
+      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
 
   PublicAlbListenerForHttp:

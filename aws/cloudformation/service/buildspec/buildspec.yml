@@ -2,6 +2,8 @@ version: 0.2
 phases:
   install:
     commands:
+      - echo docker login....
+      - docker login -u $DOCKER_LOGIN -p $DOCKER_LOGIN_KEY
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)

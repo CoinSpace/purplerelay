@@ -123,9 +123,9 @@ Resources:
       UnhealthyThresholdCount: !Ref AlbHealthCheckUnhealthyThreshold
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
-          Value: '30'
+          Value: 30
         - Key: stickiness.enabled
-          Value: 'true'
+          Value: true
 
   ListenerCertificate:
     Type: AWS::ElasticLoadBalancingV2::ListenerCertificate

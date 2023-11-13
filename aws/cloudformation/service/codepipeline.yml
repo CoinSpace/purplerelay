@@ -6,6 +6,7 @@ Parameters:
 
   ProviderBranch:
     Type: String
+    Default: feature/aws-cloudformation
 
   Owner:
     Type: String
@@ -26,6 +27,7 @@ Parameters:
 
   DockerLoginKey:
     Type: String
+    NoEcho: true
 
 ######## Cluster parameters ########
   ClusterName:
@@ -51,11 +53,11 @@ Parameters:
 
   ContainerPort:
     Type: Number
-    Default: 7777
+    Default: 80
 
   ContainerMemoryMin:
     Type: Number
-    Default: 128
+    Default: 4096
 
   ContainerMemoryMax:
     Type: String
@@ -63,7 +65,7 @@ Parameters:
 
   ContainerVirtualCPUs:
     Type: Number
-    Default: 128
+    Default: 4096
 
   EcsTasksNumber:
     Type: Number
@@ -105,7 +107,7 @@ Resources:
     Type: AWS::IAM::Role
     DeletionPolicy: Retain
     Properties:
-      RoleName: !Sub cfn-${AWS::StackName}
+      RoleName: !Sub cfn-${AWS::StackName}-${AWS::Region}
       Path: /
       AssumeRolePolicyDocument: |
         {
@@ -140,7 +142,7 @@ Resources:
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub cb-${AWS::StackName}-services
+      RoleName: !Sub cb-${AWS::StackName}-${AWS::Region}
       Path: /
       AssumeRolePolicyDocument: |
         {
@@ -192,7 +194,7 @@ Resources:
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub cp-${AWS::StackName}
+      RoleName: !Sub cp-${AWS::StackName}-${AWS::Region}
       Path: /
       AssumeRolePolicyDocument: |
         {
@@ -245,7 +247,7 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties: 
-      BucketName: !Sub ${ClusterName}-service-artifact
+      BucketName: !Sub service-artifact-${AWS::Region}
 
   CodeBuildProject:
     Type: AWS::CodeBuild::Project

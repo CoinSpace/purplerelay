@@ -3,36 +3,44 @@ Description: Create a pipeline on codepipeline that builds all resources and upd
 Parameters:
   ProviderRepo:
     Type: String
+    Default: relay
 
   ProviderBranch:
     Type: String
+    Default: feature/aws-cloudformation
 
   ConnectionArn:
     Type: String
 
   Owner:
     Type: String
+    Default: purplerelay
 
   DefaultAcmCertificateArn:
     Type: String
 ######## Cluster parameters ########
   ClusterName:
     Type: String
+    Default: purplerelay
 
   ECSInstanceType:
     Type: String
+    Default: t3.medium
 
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
 
   AsgServiceMin:
     Type: String
+    Default: 1
 
   AsgServiceMax:
     Type: String
+    Default: 4
 
   AsgServiceDesired:
     Type: String
+    Default: 1
 
   EcsImage:
     Type: String
@@ -75,7 +83,7 @@ Resources:
     Type: AWS::IAM::Role
     DeletionPolicy: Retain
     Properties:
-      RoleName: !Sub cfn-${AWS::StackName}
+      RoleName: !Sub cfn-${AWS::StackName}-${AWS::Region}
       Path: /
       AssumeRolePolicyDocument: |
         {
@@ -93,6 +101,7 @@ Resources:
               - Resource: "*"
                 Effect: Allow
                 Action:
+                  - s3:*
                   - ecs:*
                   - ecr:*
                   - iam:*
@@ -112,7 +121,7 @@ Resources:
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub cp-${AWS::StackName}
+      RoleName: !Sub cp-${AWS::StackName}-${AWS::Region}
       Path: /
       AssumeRolePolicyDocument: |
         {
@@ -145,7 +154,7 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
     Properties: 
-      BucketName: !Sub ${ClusterName}-cluster-artifact
+      BucketName: !Sub cluster-artifact-${AWS::Region}
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline

@@ -45,11 +45,11 @@ Parameters:
 
   ContainerVirtualCPUs:
     Type: String
-    Default: 4096
+    Default: 128
 
   ContainerMemoryMin:
     Type: String
-    Default: 4096
+    Default: 128
 
   ContainerMemoryMax:
     Type: String

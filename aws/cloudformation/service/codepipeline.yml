@@ -6,7 +6,6 @@ Parameters:
 
   ProviderBranch:
     Type: String
-    Default: feature/aws-cloudformation
 
   Owner:
     Type: String
@@ -21,6 +20,7 @@ Parameters:
 
   InfraBranch:
     Type: String
+    Default: feature/aws-cloudformation
 
   DockerLogin:
     Type: String
@@ -440,3 +440,8 @@ Outputs:
     Value: !Ref Pipeline
     Export:
       Name: !Sub ${ClusterName}-cluster-codepipeline
+
+  ArtifactBucket:
+    Value: !Ref ArtifactBucket
+    Export:
+      Name: !Sub service-artifact-${AWS::Region}

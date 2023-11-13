@@ -340,4 +340,4 @@ Outputs:
   ArtifactBucket:
     Value: !Ref ArtifactBucket
     Export:
-      Name: !Sub ${ClusterName}-ArtifactBucket
+      Name: !Sub cluster-artifact-${AWS::Region}

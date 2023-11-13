@@ -70,20 +70,6 @@ module "applications_southamerica-west1" {
   certificate = var.certificate
 }
 
-module "applications_northamerica-northeast1" {
-  depends_on = [ module.artifact_registry, module.vpc ]
-  source = "./modules/application"
-
-  region = "northamerica-northeast1"
-  project = var.project
-  environment = var.environment
-  registry_id = module.artifact_registry.registry_id
-  app_name = var.app_name
-  domain_url = var.domain_url
-  private_key = var.private_key
-  certificate = var.certificate
-}
-
 module "applications_asia-east1" {
   depends_on = [ module.artifact_registry, module.vpc ]
   source = "./modules/application"
@@ -196,53 +182,11 @@ module "applications_me-west1" {
   certificate = var.certificate
 }
 
-module "applications_europe-north1" {
-  depends_on = [ module.artifact_registry, module.vpc ]
-  source = "./modules/application"
-
-  region = "europe-north1"
-  project = var.project
-  environment = var.environment
-  registry_id = module.artifact_registry.registry_id
-  app_name = var.app_name
-  domain_url = var.domain_url
-  private_key = var.private_key
-  certificate = var.certificate
-}
-
-module "applications_europe-west2" {
-  depends_on = [ module.artifact_registry, module.vpc ]
-  source = "./modules/application"
-
-  region = "europe-west2"
-  project = var.project
-  environment = var.environment
-  registry_id = module.artifact_registry.registry_id
-  app_name = var.app_name
-  domain_url = var.domain_url
-  private_key = var.private_key
-  certificate = var.certificate
-}
-
 module "applications_europe-west6" {
   depends_on = [ module.artifact_registry, module.vpc ]
   source = "./modules/application"
 
   region = "europe-west6"
-  project = var.project
-  environment = var.environment
-  registry_id = module.artifact_registry.registry_id
-  app_name = var.app_name
-  domain_url = var.domain_url
-  private_key = var.private_key
-  certificate = var.certificate
-}
-
-module "applications_europe-central2" {
-  depends_on = [ module.artifact_registry, module.vpc ]
-  source = "./modules/application"
-
-  region = "europe-central2"
   project = var.project
   environment = var.environment
   registry_id = module.artifact_registry.registry_id

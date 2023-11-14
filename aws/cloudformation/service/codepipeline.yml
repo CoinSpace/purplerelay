@@ -6,12 +6,13 @@ Parameters:
 
   ProviderBranch:
     Type: String
+    Default: feature/update-nginx
 
   Owner:
     Type: String
     Default: purplerelay
 
-  ConnectionArn:
+  SecretARN:
     Type: String
 
   InfraRepo:
@@ -20,7 +21,7 @@ Parameters:
 
   InfraBranch:
     Type: String
-    Default: feature/aws-cloudformation
+    Default: feature/aws-github-alternative
 
   DockerLogin:
     Type: String
@@ -300,15 +301,15 @@ Resources:
             - Name: App
               ActionTypeId:
                 Category: Source
-                Owner: AWS
+                Owner: ThirdParty
                 Version: '1'
-                Provider: CodeStarSourceConnection
+                Provider: GitHub
               Configuration:
-                ConnectionArn: !Ref ConnectionArn
-                FullRepositoryId: !Join [ "/", [ !Ref "Owner", !Ref "ProviderRepo" ] ]
-                BranchName: !Ref ProviderBranch
-                OutputArtifactFormat: "CODE_ZIP"
-                DetectChanges: false
+                Owner: !Ref Owner
+                Repo: !Ref ProviderRepo
+                OAuthToken: !Sub "{{resolve:secretsmanager:${SecretARN}:SecretString:token}}"
+                Branch: !Ref ProviderBranch
+                PollForSourceChanges: false
               OutputArtifacts:
                 - Name: App
               RunOrder: 1
@@ -316,15 +317,15 @@ Resources:
             - Name: Infra
               ActionTypeId:
                 Category: Source
-                Owner: AWS
-                Version: 1
-                Provider: CodeStarSourceConnection
+                Owner: ThirdParty
+                Version: '1'
+                Provider: GitHub
               Configuration:
-                ConnectionArn: !Ref ConnectionArn
-                FullRepositoryId: !Join [ "/", [ !Ref "Owner", !Ref "InfraRepo" ] ]
-                BranchName: !Ref InfraBranch
-                OutputArtifactFormat: "CODE_ZIP"
-                DetectChanges: false
+                Owner: !Ref Owner
+                Repo: !Ref InfraRepo
+                OAuthToken: !Sub "{{resolve:secretsmanager:${SecretARN}:SecretString:token}}"
+                Branch: !Ref InfraBranch
+                PollForSourceChanges: false
               OutputArtifacts:
                 - Name: Infra
               RunOrder: 1

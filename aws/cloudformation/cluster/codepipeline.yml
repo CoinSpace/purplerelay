@@ -7,16 +7,16 @@ Parameters:
 
   ProviderBranch:
     Type: String
-    Default: feature/aws-cloudformation
-
-  ConnectionArn:
-    Type: String
+    Default: feature/aws-github-alternative
 
   Owner:
     Type: String
     Default: purplerelay
 
   DefaultAcmCertificateArn:
+    Type: String
+
+  SecretARN:
     Type: String
 ######## Cluster parameters ########
   ClusterName:
@@ -44,9 +44,11 @@ Parameters:
 
   EcsImage:
     Type: String
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
 
   EbsEncrypted:
     Type: String
+    Default: yes
     AllowedValues:
       - yes
       - no
@@ -170,14 +172,15 @@ Resources:
             - Name: Infra
               ActionTypeId:
                 Category: Source
-                Owner: AWS
+                Owner: ThirdParty
                 Version: '1'
-                Provider: CodeStarSourceConnection
+                Provider: GitHub
               Configuration:
-                ConnectionArn: !Ref ConnectionArn
-                BranchName: !Ref ProviderBranch
-                FullRepositoryId: !Join [ "/", [ !Ref "Owner", !Ref "ProviderRepo" ] ]
-                DetectChanges: false
+                Owner: !Ref Owner
+                Repo: !Ref ProviderRepo
+                OAuthToken: !Sub "{{resolve:secretsmanager:${SecretARN}:SecretString:token}}"
+                Branch: !Ref ProviderBranch
+                PollForSourceChanges: false
               OutputArtifacts:
                 - Name: Infra
               RunOrder: 1

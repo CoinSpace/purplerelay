@@ -17,7 +17,8 @@ phases:
       - cp aws/docker/Dockerfile .
       - cp aws/nginx/* .
       - cp aws/scripts/*.sh .
-      - aws s3 cp s3://purplerelay-certificate ./ --recursive
+      - aws s3 cp s3://purplerelay-certificates ./ --recursive --region us-east-1
+      - aws s3 cp s3://purplerelay-dbdump ./ --recursive --region eu-west-1
       - docker pull $REPOSITORY_URI:latest || true
   build:
     commands:

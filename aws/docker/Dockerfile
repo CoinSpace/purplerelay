@@ -67,8 +67,6 @@ COPY --from=build /build/strfry strfry
 COPY ./STAR.purplerelay.com.key /etc/ssl/STAR.purplerelay.com.key
 COPY ./ssl-bundle.crt /etc/ssl/ssl-bundle.crt
 
-COPY ./dump.jsonl.zst /var/tmp
-
 COPY --from=build ./build/nginx.conf ./
 COPY --from=build ./build/default.conf ./
 RUN mkdir -p /var/www/media

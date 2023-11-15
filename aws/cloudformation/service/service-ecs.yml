@@ -45,15 +45,12 @@ Parameters:
 
   ContainerVirtualCPUs:
     Type: String
-    Default: 128
 
   ContainerMemoryMin:
     Type: String
-    Default: 128
 
   ContainerMemoryMax:
     Type: String
-    Default: LIMITLESS
 
   DockerImageVersion:
     Type: String

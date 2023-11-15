@@ -23,12 +23,12 @@ Parameters:
     Type: String
     Default: feature/aws-github-alternative
 
-  DockerLogin:
-    Type: String
+  # DockerLogin:
+  #   Type: String
 
-  DockerLoginKey:
-    Type: String
-    NoEcho: true
+  # DockerLoginKey:
+  #   Type: String
+  #   NoEcho: true
 
 ######## Cluster parameters ########
   ClusterName:
@@ -58,15 +58,15 @@ Parameters:
 
   ContainerMemoryMin:
     Type: Number
-    Default: 4096
+    Default: 3600
 
   ContainerMemoryMax:
     Type: String
-    Default: LIMITLESS
+    Default: 3600
 
   ContainerVirtualCPUs:
     Type: Number
-    Default: 4096
+    Default: 1870
 
   EcsTasksNumber:
     Type: Number
@@ -282,10 +282,10 @@ Resources:
             Value: !Ref AWS::AccountId
           - Name: REPOSITORY_URI
             Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
-          - Name: DOCKER_LOGIN
-            Value: !Sub ${DockerLogin}
-          - Name: DOCKER_LOGIN_KEY
-            Value: !Sub ${DockerLoginKey}
+          # - Name: DOCKER_LOGIN
+          #   Value: !Sub ${DockerLogin}
+          # - Name: DOCKER_LOGIN_KEY
+          #   Value: !Sub ${DockerLoginKey}
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline

@@ -57,15 +57,15 @@ Parameters:
 
   ContainerMemoryMin:
     Type: Number
-    Default: 4096
+    Default: 3600
 
   ContainerMemoryMax:
     Type: String
-    Default: LIMITLESS
+    Default: 3600
 
   ContainerVirtualCPUs:
     Type: Number
-    Default: 4096
+    Default: 1870
 
   EcsTasksNumber:
     Type: Number

@@ -22,12 +22,12 @@ Parameters:
     Type: String
     Default: feature/aws-cloudformation
 
-  DockerLogin:
-    Type: String
+  # DockerLogin:
+  #   Type: String
 
-  DockerLoginKey:
-    Type: String
-    NoEcho: true
+  # DockerLoginKey:
+  #   Type: String
+  #   NoEcho: true
 
 ######## Cluster parameters ########
   ClusterName:
@@ -281,10 +281,10 @@ Resources:
             Value: !Ref AWS::AccountId
           - Name: REPOSITORY_URI
             Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
-          - Name: DOCKER_LOGIN
-            Value: !Sub ${DockerLogin}
-          - Name: DOCKER_LOGIN_KEY
-            Value: !Sub ${DockerLoginKey}
+          # - Name: DOCKER_LOGIN
+          #   Value: !Sub ${DockerLogin}
+          # - Name: DOCKER_LOGIN_KEY
+          #   Value: !Sub ${DockerLoginKey}
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline

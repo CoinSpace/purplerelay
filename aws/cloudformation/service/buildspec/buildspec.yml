@@ -2,8 +2,8 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo docker login....
-      - echo $DOCKER_LOGIN_KEY | docker login -u $DOCKER_LOGIN --password-stdin
+      # - echo docker login....
+      # - echo $DOCKER_LOGIN_KEY | docker login -u $DOCKER_LOGIN --password-stdin
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
@@ -18,7 +18,6 @@ phases:
       - cp aws/nginx/* .
       - cp aws/scripts/*.sh .
       - aws s3 cp s3://purplerelay-certificates ./ --recursive --region us-east-1
-      - aws s3 cp s3://purplerelay-dbdump ./ --recursive --region eu-west-1
       - docker pull $REPOSITORY_URI:latest || true
   build:
     commands:

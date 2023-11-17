@@ -44,6 +44,7 @@ Parameters:
 
   EcsImage:
     Type: String
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
 
   EbsEncrypted:
     Type: String

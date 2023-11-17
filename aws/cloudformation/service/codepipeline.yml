@@ -6,6 +6,7 @@ Parameters:
 
   ProviderBranch:
     Type: String
+    Default: feature/update-nginx
 
   Owner:
     Type: String

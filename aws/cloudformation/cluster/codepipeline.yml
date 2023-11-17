@@ -48,6 +48,7 @@ Parameters:
 
   EbsEncrypted:
     Type: String
+    Default: yes
     AllowedValues:
       - yes
       - no

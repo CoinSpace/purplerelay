@@ -120,7 +120,7 @@ Resources:
           SubnetId:
             'Fn::ImportValue': !Sub ${ClusterName}-PublicSubnet1
       ImageId: !Ref EcsImage
-      InstanceType: t3a.micro
+      InstanceType: t3.micro
       KeyName: !Ref KeyName
       IamInstanceProfile: !Ref EC2InstanceProfile
 

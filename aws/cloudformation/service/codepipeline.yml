@@ -70,7 +70,7 @@ Parameters:
 
   EcsTasksNumber:
     Type: Number
-    Default: 2
+    Default: 1
 
   MaxCapacity:
     Type: Number

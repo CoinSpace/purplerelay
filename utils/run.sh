@@ -18,3 +18,4 @@ adduser -S www-data
 nginx
 ./strfry relay
 ./strfry import < ./dump.jsonl --no-verify &
+./strfry router /etc/strfry-router.config &

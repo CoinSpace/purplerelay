@@ -97,25 +97,27 @@ Resources:
         SampledRequestsEnabled: true
       Scope: REGIONAL
       Rules:
-      - Name: UserAgent-Bostr-Block
-        Priority: 0
-        Statement:
-          ByteMatchStatement:
-            FieldToMatch:
-              Headers:
-                MatchPattern:
-                  All: {}
-                MatchScope: ALL
-                OversizeHandling: NO_MATCH
-            TextTransformations:
-              - Type: NONE
-                Priority: 0
-            PositionalConstraint: CONTAINS_WORD
-            SearchString: Bostr
-        VisibilityConfig:
-          CloudWatchMetricsEnabled: true
-          MetricName: UserAgent-Bostr-Block
-          SampledRequestsEnabled: true
+        - Name: UserAgent-Bostr-Block
+          Priority: 0
+          Action:
+            Block: {}
+          Statement:
+            ByteMatchStatement:
+              FieldToMatch:
+                Headers:
+                  MatchPattern:
+                    All: {}
+                  MatchScope: ALL
+                  OversizeHandling: NO_MATCH
+              TextTransformations:
+                - Type: NONE
+                  Priority: 0
+              PositionalConstraint: CONTAINS_WORD
+              SearchString: Bostr
+          VisibilityConfig:
+            CloudWatchMetricsEnabled: true
+            MetricName: UserAgent-Bostr-Block
+            SampledRequestsEnabled: true
 
 Outputs:
   LoadBalancerSecurityGroup:

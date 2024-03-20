@@ -91,6 +91,7 @@ Resources:
       DefaultAction:
         Block: {}
       Description: WebACL for the public ALB
+      Scope: REGIONAL
       Rules:
       - Name: UserAgent-Bostr-Block
         Priority: 0
@@ -107,10 +108,10 @@ Resources:
                 Priority: 0
             PositionalConstraint: CONTAINS_WORD
             SearchString: Bostr
-      VisibilityConfig:
-        CloudWatchMetricsEnabled: true
-        MetricName: UserAgent-Bostr-Block
-        SampledRequestsEnabled: true
+        VisibilityConfig:
+          CloudWatchMetricsEnabled: true
+          MetricName: UserAgent-Bostr-Block
+          SampledRequestsEnabled: true
 
 Outputs:
   LoadBalancerSecurityGroup:

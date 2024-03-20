@@ -118,6 +118,11 @@ Resources:
             CloudWatchMetricsEnabled: true
             MetricName: UserAgent-Bostr-Block
             SampledRequestsEnabled: true
+  WebACLAssociation:
+    Type: AWS::WAFv2::WebACLAssociation
+    Properties:
+      ResourceArn: !Ref PublicAlb
+      WebACLArn: !Ref WebACL
 
 Outputs:
   LoadBalancerSecurityGroup:

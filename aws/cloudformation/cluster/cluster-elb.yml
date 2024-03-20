@@ -121,8 +121,8 @@ Resources:
   WebACLAssociation:
     Type: AWS::WAFv2::WebACLAssociation
     Properties:
-      ResourceArn: !GetAtt PublicAlb.arn
-      WebACLArn: !GetAtt WebACL.arn
+      ResourceArn: !GetAtt PublicAlb.Arn
+      WebACLArn: !GetAtt WebACL.Arn
 
 Outputs:
   LoadBalancerSecurityGroup:

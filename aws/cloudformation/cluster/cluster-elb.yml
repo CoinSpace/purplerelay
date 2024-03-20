@@ -91,6 +91,10 @@ Resources:
       DefaultAction:
         Block: {}
       Description: WebACL for the public ALB
+      VisibilityConfig:
+        CloudWatchMetricsEnabled: true
+        MetricName: !Sub ${ClusterName}-WebACL-elb
+        SampledRequestsEnabled: true
       Scope: REGIONAL
       Rules:
       - Name: UserAgent-Bostr-Block

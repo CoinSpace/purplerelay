@@ -98,12 +98,13 @@ Resources:
           ByteMatchStatement:
             FieldToMatch:
               Headers:
-                MatchPattern: All
+                MatchPattern:
+                  All: {}
                 MatchScope: ALL
                 OversizeHandling: NO_MATCH
             TextTransformations:
-              - Priority: 0
-                Type: NONE
+              - Type: NONE
+                Priority: 0
             PositionalConstraint: CONTAINS_WORD
             SearchString: Bostr
       VisibilityConfig:

@@ -84,6 +84,33 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref PublicAlbDefaultTargetGroup
 
+  WebACL:
+    Type: AWS::WAFv2::WebACL
+    Properties:
+      Name: !Sub ${ClusterName}-WebACL-elb
+      DefaultAction:
+        Block: {}
+      Description: WebACL for the public ALB
+      Rules:
+      - Name: UserAgent-Bostr-Block
+        Priority: 0
+        Statement:
+          ByteMatchStatement:
+            FieldToMatch:
+              Headers:
+                MatchPattern: All
+                MatchScope: ALL
+                OversizeHandling: NO_MATCH
+            TextTransformations:
+              - Priority: 0
+                Type: NONE
+            PositionalConstraint: CONTAINS_WORD
+            SearchString: Bostr
+      VisibilityConfig:
+        CloudWatchMetricsEnabled: true
+        MetricName: UserAgent-Bostr-Block
+        SampledRequestsEnabled: true
+
 Outputs:
   LoadBalancerSecurityGroup:
     Value: !Ref LoadBalancerSecurityGroup

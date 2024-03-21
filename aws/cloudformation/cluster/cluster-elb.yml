@@ -89,7 +89,7 @@ Resources:
     Properties:
       Name: !Sub ${ClusterName}-WebACL-elb
       DefaultAction:
-        Block: {}
+        Allow: {}
       Description: WebACL for the public ALB
       VisibilityConfig:
         CloudWatchMetricsEnabled: true
@@ -106,13 +106,14 @@ Resources:
               FieldToMatch:
                 Headers:
                   MatchPattern:
-                    All: {}
+                    IncludedHeaders:
+                    - "User-Agent"
                   MatchScope: ALL
                   OversizeHandling: NO_MATCH
               TextTransformations:
                 - Type: NONE
                   Priority: 0
-              PositionalConstraint: CONTAINS_WORD
+              PositionalConstraint: CONTAINS
               SearchString: Bostr
           VisibilityConfig:
             CloudWatchMetricsEnabled: true

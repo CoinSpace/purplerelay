@@ -13,3 +13,4 @@ adduser -S www-data
 
 nginx
 ./strfry relay
+./strfry router /etc/strfry-router.config &

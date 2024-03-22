@@ -52,6 +52,7 @@ RUN \
 RUN \
   apk --no-cache add \
     nginx \
+    curl \
     lsb-release \
     fuse \
     fuse-dev \
@@ -72,8 +73,14 @@ COPY --from=build ./build/default.conf ./
 RUN mkdir -p /var/www/media
 COPY --from=build ./build/favicon.ico /var/www/media/favicon.ico
 
+RUN curl -fsSL https://deno.land/install.sh | sh
+
 COPY ./strfry.conf /etc/strfry.conf
+COPY ./strfry-router.config /etc/strfry-router.config
+COPY ./strfry-policy.ts /opt/strfry-policy.ts
 COPY ./strfry-db ./strfry-db
+
+RUN chmod +x /opt/strfry-policy.ts
 
 COPY ./entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh

@@ -20,7 +20,7 @@ Parameters:
 
   AlbHealthCheckPath:
     Type: String
-    Default: /
+    Default: /healthcheck
 
   AlbHealthCheckTimeout:
     Type: String

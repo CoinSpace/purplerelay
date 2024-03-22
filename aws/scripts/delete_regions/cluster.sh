@@ -27,11 +27,11 @@ for STACK_NAME in "${STACKS[@]}"; do
   echo "Stack $STACK_NAME deleted successfully."
 done
 
-aws s3 rm s3://cluster-artifact-"$REGION" --recursive || \
+aws s3 rm s3://cluster-artifact-"$REGION" --recursive --region $REGION || \
   echo "The S3 bucket content doesn't exist or it's already deleted. Skipping deletion."
 
 
-aws s3 rb s3://cluster-artifact-"$REGION" || \
+aws s3 rb s3://cluster-artifact-"$REGION" --region $REGION || \
   echo "The S3 bucket doesn't exist or it's already deleted. Skipping deletion."
 
 

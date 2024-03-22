@@ -119,6 +119,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:DeleteLogGroup
                   - cloudformation:*
+                  - wafv2:*
 
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
@@ -151,6 +152,7 @@ Resources:
                   - ec2:*
                   - s3:*
                   - codestar-connections:*
+                  - wafv2:*
 
   ArtifactBucket:
     Type: AWS::S3::Bucket

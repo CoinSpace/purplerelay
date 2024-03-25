@@ -205,7 +205,6 @@ Resources:
       LoadBalancers:
         -
           ContainerName: !Sub Application__${ClusterName}
-          ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref TargetGroup
       HealthCheckGracePeriodSeconds: !Ref AlbHealthCheckStartPeriod
       PlacementStrategies:

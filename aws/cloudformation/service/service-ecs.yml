@@ -198,13 +198,13 @@ Resources:
         - RegistryArn:
             'Fn::GetAtt': [ServiceDiscovery, Arn]
           ContainerName: !Sub Application__${ClusterName}
-          ContainerPort: !Ref ContainerPort
       DeploymentConfiguration:
         MinimumHealthyPercent: !If [hasOnlyOneTask, 0, 100]
         MaximumPercent: 200
       LoadBalancers:
         -
           ContainerName: !Sub Application__${ClusterName}
+          ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref TargetGroup
       HealthCheckGracePeriodSeconds: !Ref AlbHealthCheckStartPeriod
       PlacementStrategies:

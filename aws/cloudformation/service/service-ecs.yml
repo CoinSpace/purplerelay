@@ -176,7 +176,6 @@ Resources:
       DesiredCount: !Ref EcsTasksNumber
       NetworkConfiguration:
         AwsvpcConfiguration:
-          AssignPublicIp: ENABLED
           SecurityGroups:
             - 'Fn::ImportValue': !Sub ${ClusterName}-InternalAccessSecurityGroup
           Subnets:

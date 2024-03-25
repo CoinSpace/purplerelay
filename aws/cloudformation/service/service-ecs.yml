@@ -113,6 +113,19 @@ Resources:
           SOA:
             TTL: 86400
 
+  ServiceDiscovery:
+    Type: AWS::ServiceDiscovery::Service
+    Condition: hasServiceDiscovery
+    Properties:
+      DnsConfig:
+        DnsRecords:
+          - TTL: 86400
+            Type: A
+        NamespaceId:
+          'Fn::GetAtt': [PrivateDnsNamespace, Id]
+      HealthCheckCustomConfig:
+        FailureThreshold: 1
+
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -181,6 +194,11 @@ Resources:
           Subnets:
             - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet1
             - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet2
+      ServiceRegistries:
+        - RegistryArn:
+            'Fn::GetAtt': [ServiceDiscovery, Arn]
+          ContainerName: !Sub Application__${ClusterName}
+          ContainerPort: !Ref ContainerPort
       DeploymentConfiguration:
         MinimumHealthyPercent: !If [hasOnlyOneTask, 0, 100]
         MaximumPercent: 200
@@ -311,19 +329,6 @@ Resources:
         StepAdjustments:
           - MetricIntervalUpperBound: 0
             ScalingAdjustment: -1
-
-  ServiceDiscovery:
-    Type: AWS::ServiceDiscovery::Service
-    Condition: hasServiceDiscovery
-    Properties:
-      DnsConfig:
-        DnsRecords:
-          - TTL: 86400
-            Type: A
-        NamespaceId:
-          'Fn::GetAtt': [PrivateDnsNamespace, Id]
-      HealthCheckCustomConfig:
-        FailureThreshold: 1
 
 Outputs:
   WebEcsScaleOutPolicy:

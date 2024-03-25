@@ -176,6 +176,14 @@ Resources:
         'Fn::ImportValue': !Sub ${ClusterName}-ECSRoleArn
       TaskDefinition: !Ref servicetaskdefinitionWEB
       DesiredCount: !Ref EcsTasksNumber
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - 'Fn::ImportValue': !Sub ${ClusterName}-InternalAccessSecurityGroup
+          Subnets:
+            - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet1
+            - 'Fn::ImportValue': !Sub ${ClusterName}-PrivateSubnet2
       DeploymentConfiguration:
         MinimumHealthyPercent: !If [hasOnlyOneTask, 0, 100]
         MaximumPercent: 200

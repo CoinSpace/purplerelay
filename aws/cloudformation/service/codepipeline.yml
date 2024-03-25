@@ -139,6 +139,7 @@ Resources:
                   - secretsmanager:*
                   - autoscaling:*
                   - rds:*
+                  - servicediscovery:*
 
   CodeBuildServiceRole:
     Type: AWS::IAM::Role

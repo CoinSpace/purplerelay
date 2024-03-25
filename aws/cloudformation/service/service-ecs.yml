@@ -172,8 +172,6 @@ Resources:
       ServiceName: !Sub ${ClusterName}
       Cluster:
         'Fn::ImportValue': !Sub ${ClusterName}-ECSCluster
-      Role:
-        'Fn::ImportValue': !Sub ${ClusterName}-ECSRoleArn
       TaskDefinition: !Ref servicetaskdefinitionWEB
       DesiredCount: !Ref EcsTasksNumber
       NetworkConfiguration:

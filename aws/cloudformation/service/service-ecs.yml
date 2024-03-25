@@ -220,7 +220,7 @@ Resources:
           Image: !Sub ${DockerImageVersion}
           PortMappings:
             -
-              HostPort: 0
+              HostPort: !Ref ContainerPort
               ContainerPort: !Ref ContainerPort
           Essential: true
           MemoryReservation: !Ref ContainerMemoryMin

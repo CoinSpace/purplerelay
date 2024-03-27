@@ -8,23 +8,23 @@ Parameters:
   CidrIp:
     Description: Cidr Ip
     Type: String
-    Default: 10.10.0.0
+    Default: 10.20.0.0
 
   IpPublicSubnet1:
     Type: String
-    Default: 10.10.10.0
+    Default: 10.20.10.0
 
   IpPublicSubnet2:
     Type: String
-    Default: 10.10.20.0
+    Default: 10.20.20.0
 
   IpPrivateSubnet1:
     Type: String
-    Default: 10.10.30.0
+    Default: 10.20.30.0
 
   IpPrivateSubnet2:
     Type: String
-    Default: 10.10.40.0
+    Default: 10.20.40.0
 
 Resources:
   VPC:
@@ -180,7 +180,7 @@ Resources:
       SubnetId: !Ref PrivateSubnet2
       RouteTableId: !Ref PrivateRouteTable
 
-  # VPCPeering:
+   # VPCPeering:
   #   Type: 'AWS::EC2::VPCPeeringConnection'
   #   Properties:
   #     PeerOwnerId: !Ref 'AWS::AccountId'

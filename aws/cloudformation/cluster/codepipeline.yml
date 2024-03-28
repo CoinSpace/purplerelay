@@ -53,6 +53,9 @@ Parameters:
       - yes
       - no
 
+  CentralVPC:
+    Type: String
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -203,7 +206,8 @@ Resources:
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 ParameterOverrides: !Sub |
                   {
-                    "ClusterName": "${ClusterName}"
+                    "ClusterName": "${ClusterName}",
+                    "CentralVPC": "${CentralVPC}"
                   }
               RunOrder: 2
               InputArtifacts:

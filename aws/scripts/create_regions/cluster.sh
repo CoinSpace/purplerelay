@@ -24,6 +24,12 @@ if [ -z "$4" ]; then
 fi
 KEYPAIR="$4"
 
+if [ -z "$5" ]; then
+    echo "Error: Please provide the us-east-1 (N. Virginia) VPC id as the fourth argument."
+    exit 1
+fi
+CENTRALVPC="$5"
+
 aws s3 rm s3://cluster-artifact-"$REGION" --recursive || {
   echo "The S3 bucket content doesn't exist or it's already deleted. Skipping deletion."
 }
@@ -50,5 +56,6 @@ aws cloudformation create-stack \
     ParameterKey=ConnectionArn,ParameterValue="$CONNECTION_ARN" \
     ParameterKey=DefaultAcmCertificateArn,ParameterValue="$CERTIFICATE_ARN" \
     ParameterKey=KeyName,ParameterValue="$KEYPAIR" \
+    ParameterKey=CentralVPC,ParameterValue="$CENTRALVPC" \
   --capabilities CAPABILITY_NAMED_IAM \
   --region "$REGION"

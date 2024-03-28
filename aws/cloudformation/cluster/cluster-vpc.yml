@@ -26,6 +26,9 @@ Parameters:
     Type: String
     Default: 10.20.40.0
 
+  CentralVPC:
+    Type: String
+
 Resources:
   VPC:
     Type: 'AWS::EC2::VPC'
@@ -180,15 +183,15 @@ Resources:
       SubnetId: !Ref PrivateSubnet2
       RouteTableId: !Ref PrivateRouteTable
 
-   # VPCPeering:
-  #   Type: 'AWS::EC2::VPCPeeringConnection'
-  #   Properties:
-  #     PeerOwnerId: !Ref 'AWS::AccountId'
-  #     PeerVpcId: !Ref VPC
-  #     VpcId: 
-  #     Tags:
-  #       - Key: Name
-  #         Value: !Sub '${ClusterName}-VPCPeering'
+   VPCPeering:
+    Type: 'AWS::EC2::VPCPeeringConnection'
+    Properties:
+      PeerOwnerId: !Ref 'AWS::AccountId'
+      PeerVpcId: !Ref VPC
+      VpcId: !Ref CentralVPC
+      Tags:
+        - Key: Name
+          Value: !Sub '${ClusterName}-VPCPeering'
 
 Outputs:
   VPC:

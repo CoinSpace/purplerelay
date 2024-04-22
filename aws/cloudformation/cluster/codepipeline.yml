@@ -18,7 +18,7 @@ Parameters:
 
   DefaultAcmCertificateArn:
     Type: String
-######## Cluster parameters ########
+  ######## Cluster parameters ########
   ClusterName:
     Type: String
     Default: purplerelay
@@ -53,7 +53,20 @@ Parameters:
       - yes
       - no
 
-  CentralVPC:
+  CidrIp:
+    Description: Cidr Ip
+    Type: String
+
+  IpPublicSubnet1:
+    Type: String
+
+  IpPublicSubnet2:
+    Type: String
+
+  IpPrivateSubnet1:
+    Type: String
+
+  IpPrivateSubnet2:
     Type: String
 
 Metadata:
@@ -207,7 +220,11 @@ Resources:
                 ParameterOverrides: !Sub |
                   {
                     "ClusterName": "${ClusterName}",
-                    "CentralVPC": "${CentralVPC}"
+                    "CidrIp": "${CidrIp}",
+                    "IpPublicSubnet1": "${IpPublicSubnet1}",
+                    "IpPublicSubnet2": "${IpPublicSubnet2}",
+                    "IpPrivateSubnet1": "${IpPrivateSubnet1}",
+                    "IpPrivateSubnet2": "${IpPrivateSubnet2}"
                   }
               RunOrder: 2
               InputArtifacts:

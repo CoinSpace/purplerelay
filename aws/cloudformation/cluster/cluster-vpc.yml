@@ -26,9 +26,6 @@ Parameters:
     Type: String
     Default: 10.10.40.0
 
-  CentralVPC:
-    Type: String
-
 Resources:
   VPC:
     Type: 'AWS::EC2::VPC'

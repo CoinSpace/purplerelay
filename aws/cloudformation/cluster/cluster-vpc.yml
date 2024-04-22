@@ -183,7 +183,7 @@ Resources:
       SubnetId: !Ref PrivateSubnet2
       RouteTableId: !Ref PrivateRouteTable
 
-   VPCPeering:
+  VPCPeering:
     Type: 'AWS::EC2::VPCPeeringConnection'
     Properties:
       PeerOwnerId: !Ref 'AWS::AccountId'

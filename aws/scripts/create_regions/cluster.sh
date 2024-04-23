@@ -207,5 +207,5 @@ aws cloudformation create-stack \
   --capabilities CAPABILITY_NAMED_IAM \
   --region "$REGION"
 
-# chmod +x create-peering.sh
-# ./create-peering.sh
+# chmod +x ./vpc_peering.sh
+# ./vpc_peering.sh

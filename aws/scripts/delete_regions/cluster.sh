@@ -15,6 +15,9 @@ STACKS=(
   "cluster-pipeline"
 )
 
+chmod +x ./vpc_peering.sh
+./vpc_peering.sh $REGION
+
 for STACK_NAME in "${STACKS[@]}"; do
   aws cloudformation delete-stack \
     --stack-name "$STACK_NAME" \

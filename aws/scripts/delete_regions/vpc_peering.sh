@@ -20,6 +20,40 @@ delete_vpc_peering() {
 
 vpc=$(list_vpcs_with_tag $REGION)
 
+route_table_id=$(aws ec2 describe-route-tables \
+    --region $REGION \
+    --filters "Name=tag:Name,Values=purplerelay-PrivateRouteTable" \
+    --query "RouteTables[].RouteTableId" \
+    --output text)
+
+echo "route table: $route_table_id"
+
+cidr_block=$(aws ec2 describe-vpcs \
+    --region $REGION \
+    --filters "Name=tag-key,Values=Name" "Name=tag-value,Values=purplerelay-VPC" \
+    --query "Vpcs[].CidrBlock" \
+    --output text)
+
+routes=$(aws ec2 describe-route-tables \
+    --region $REGION \
+    --route-table-id $route_table_id \
+    --query "RouteTables[0].Routes" \
+    --output json)
+
+for route in $(echo $routes | jq -c '.[]'); do
+    destination_cidr=$(echo $route | jq -r '.DestinationCidrBlock')
+
+    if [ "$destination_cidr" != "$cidr_block" ] && [ "$destination_cidr" != "0.0.0.0/0" ]; then
+        echo "Deletando rota para $destination_cidr"
+        aws ec2 delete-route \
+            --region $REGION \
+            --route-table-id $route_table_id \
+            --destination-cidr-block $destination_cidr
+    fi
+done
+
+sleep 10
+
 if [ -z "$vpc" ]; then
     echo "No VPCs found with tag '$TAG_KEY:$TAG_VALUE' in region $REGION."
 else

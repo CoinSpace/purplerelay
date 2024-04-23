@@ -26,7 +26,6 @@ for region in $REGIONS; do
 
     if [ -z "$vpcs" ]; then
         echo "No VPC with a tag '$TAG_KEY:$TAG_VALUE' found in the $region."
-        # echo ''
     else
         echo "$vpcs" > ./vpc_regions/$region
         num_region=$((num_region + 1))
@@ -71,12 +70,61 @@ for ((i=0; i<num_region; i++)); do
                 if [ -n "$peering_id" ]; then
                     echo "VPC Peering created with ID: $peering_id"
                     echo "Wait for the connection between VPCs to complete..."
-                    sleep 60
+                    echo "peering id: $peering_id"
+                    sleep 15
                     aws ec2 accept-vpc-peering-connection \
                         --region ${array_region[j]} \
                         --vpc-peering-connection-id $peering_id
 
                     echo "VPC Peering accepted in the region ${array_region[j]}"
+                    sleep 10
+
+                    echo "Configuring route table..."
+                    route_table_id1=$(aws ec2 describe-route-tables \
+                                        --region ${array_region[i]} \
+                                        --filters "Name=tag:Name,Values=purplerelay-PrivateRouteTable" \
+                                        --query "RouteTables[].RouteTableId" \
+                                        --output text)
+
+                    route_table_id2=$(aws ec2 describe-route-tables \
+                                        --region ${array_region[j]} \
+                                        --filters "Name=tag:Name,Values=purplerelay-PrivateRouteTable" \
+                                        --query "RouteTables[].RouteTableId" \
+                                        --output text)
+
+                    if [ -n "$route_table_id1" ] && [ -n "$route_table_id2" ]; then
+
+                        cidr_block1=$(aws ec2 describe-vpcs \
+                            --region ${array_region[i]} \
+                            --filters "Name=tag-key,Values=Name" "Name=tag-value,Values=purplerelay-VPC" \
+                            --query "Vpcs[].CidrBlock" \
+                            --output text)
+
+                        cidr_block2=$(aws ec2 describe-vpcs \
+                            --region ${array_region[j]} \
+                            --filters "Name=tag-key,Values=Name" "Name=tag-value,Values=purplerelay-VPC" \
+                            --query "Vpcs[].CidrBlock" \
+                            --output text)
+
+                        aws ec2 create-route \
+                            --region ${array_region[i]} \
+                            --route-table-id $route_table_id1 \
+                            --destination-cidr-block $cidr_block2 \
+                            --vpc-peering-connection-id $peering_id
+
+                        sleep 20
+
+                        aws ec2 create-route \
+                            --region ${array_region[j]} \
+                            --route-table-id $route_table_id2 \
+                            --destination-cidr-block $cidr_block1 \
+                            --vpc-peering-connection-id $peering_id
+
+                        echo "Route table configuration for regions ${array_region[i]} and ${array_region[j]} finalized"
+                        sleep 10
+                    else
+                        echo "Route table not found."
+                    fi   
                 else
                     echo "Failed to create VPC Peering between VPC $vpc1 in region ${array_region[i]} and VPC $vpc2 in region ${array_region[j]}."
                 fi

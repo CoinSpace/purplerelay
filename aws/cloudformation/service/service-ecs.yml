@@ -123,7 +123,7 @@ Resources:
           - TTL: 86400
             Type: A
         NamespaceId:
-          !Sub ${AWS::Region}-${ClusterName}.internal
+          !Ref PrivateDnsNamespace
       HealthCheckCustomConfig:
         FailureThreshold: 1
 

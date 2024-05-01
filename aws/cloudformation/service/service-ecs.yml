@@ -127,7 +127,7 @@ Resources:
           - TTL: 86400
             Type: A
         NamespaceId:
-          !Ref PrivateDnsNamespace
+          'Fn::ImportValue': !Sub ${ClusterName}PrivateNameSpace
       HealthCheckCustomConfig:
         FailureThreshold: 1
 

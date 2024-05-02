@@ -94,6 +94,10 @@ Parameters:
   MinCapacity:
     Type: String 
 
+  PrivateDnsNamespace:
+    Type: String
+    Default: ns-2rwrojwnxafnzngu
+
 Conditions:
   hasSSL: !Equals [!Ref HasHTTPS, "true"]
   hasServiceDiscovery: !Equals [!Ref ContainerNetworkMode, "awsvpc"]
@@ -123,7 +127,7 @@ Resources:
           - TTL: 86400
             Type: A
         NamespaceId:
-          'Fn::ImportValue': !Sub ${ClusterName}PrivateNameSpace
+          !Ref PrivateDnsNamespace
       HealthCheckCustomConfig:
         FailureThreshold: 1
 

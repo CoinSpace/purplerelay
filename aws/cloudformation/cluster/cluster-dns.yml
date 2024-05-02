@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Setup ECS Cluster
+Parameters:
+  ClusterName:
+    Type: String
+    Default: purplerelay
+
+Resources:
+  PrivateNameSpace:
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+    Properties:
+      Description: !Sub Private Name for Cluster ${ClusterName}
+      Vpc:
+        'Fn::ImportValue': !Sub ${ClusterName}-VPC
+      Name: !Sub ${ClusterName}.internal 
+      Properties:
+        DnsProperties:
+          SOA:
+            TTL: 86400
+
+Outputs:
+  PrivateNameSpace:
+    Value: !Ref PrivateNameSpace
+    Export:
+      Name: !Sub ${ClusterName}PrivateNameSpace
+
+  PrivateNameSpaceName:
+    Value: !Sub ${ClusterName}.internal
+    Export:
+      Name: !Sub ${ClusterName}PrivateNameSpaceName

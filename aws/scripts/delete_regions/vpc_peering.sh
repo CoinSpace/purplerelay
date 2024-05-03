@@ -44,7 +44,7 @@ for route in $(echo $routes | jq -c '.[]'); do
     destination_cidr=$(echo $route | jq -r '.DestinationCidrBlock')
 
     if [ "$destination_cidr" != "$cidr_block" ] && [ "$destination_cidr" != "0.0.0.0/0" ]; then
-        echo "Deletando rota para $destination_cidr"
+        echo "Deleting route to $destination_cidr"
         aws ec2 delete-route \
             --region $REGION \
             --route-table-id $route_table_id \

@@ -1,0 +1,386 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create a pipeline on codepipeline that builds all resources and updates the ecs service
+Parameters:
+  ProviderRepo:
+    Type: String
+    Default: relay
+
+  ProviderBranch:
+    Type: String
+    Default: feature/aws-cloudformation
+
+  Owner:
+    Type: String
+    Default: purplerelay
+
+  DefaultAcmCertificateArn:
+    Type: String
+  ######## Cluster parameters ########
+  ClusterName:
+    Type: String
+    Default: purplerelay
+
+  ECSInstanceType:
+    Type: String
+    Default: t3.medium
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+
+  AsgServiceMin:
+    Type: String
+    Default: 1
+
+  AsgServiceMax:
+    Type: String
+    Default: 4
+
+  AsgServiceDesired:
+    Type: String
+    Default: 1
+
+  EcsImage:
+    Type: String
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
+
+  EbsEncrypted:
+    Type: String
+    Default: yes
+    AllowedValues:
+      - yes
+      - no
+
+  CidrIp:
+    Description: Cidr Ip
+    Type: String
+    Default: 10.50.0.0
+
+  IpPublicSubnet1:
+    Type: String
+    Default: 10.50.10.0
+
+  IpPublicSubnet2:
+    Type: String
+    Default: 10.50.20.0
+
+  IpPrivateSubnet1:
+    Type: String
+    Default: 10.50.30.0
+
+  IpPrivateSubnet2:
+    Type: String
+    Default: 10.50.40.0
+
+  GitHubOwner:
+    Type: String
+    Default: purplerelay
+
+  GitHubRepoInfra:
+    Type: String
+    Default: relay
+
+  GitHubBranchInfra:
+    Type: String
+    Default: feature/aws-cloudformation
+
+  GitHubToken:
+    Type: String
+    NoEcho: true
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+    - Label:
+        default: CodePipeline General Params
+      Parameters:
+        - Owner
+        - Provider
+        - ProviderRepo
+        - ProviderBranch
+        - ProviderToken
+
+    - Label:
+        default: Cluster General Params
+      Parameters:
+        - ClusterName
+
+    - Label:
+        default: Cluster ECS Params
+      Parameters:
+        - ECSInstanceType
+        - KeyName
+        - AsgServiceMin
+        - AsgServiceMax
+        - AsgServiceDesired
+        - EcsImage
+
+Resources:
+  CloudFormationExecutionRole:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Retain
+    Properties:
+      RoleName: !Sub cfn-${AWS::StackName}-${AWS::Region}
+      Path: /
+      AssumeRolePolicyDocument: |
+        {
+          "Statement": [{
+              "Effect": "Allow",
+              "Principal": { "Service": [ "cloudformation.amazonaws.com" ]},
+              "Action": [ "sts:AssumeRole" ]
+          }]
+        }
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - s3:*
+                  - ecs:*
+                  - ecr:*
+                  - iam:*
+                  - application-autoscaling:*
+                  - ec2:*
+                  - elasticloadbalancing:*
+                  - ssm:*
+                  - route53:*
+                  - cloudwatch:*
+                  - events:*
+                  - secretsmanager:*
+                  - autoscaling:*
+                  - logs:CreateLogGroup
+                  - logs:DeleteLogGroup
+                  - cloudformation:*
+                  - wafv2:*
+
+  CodePipelineServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cp-${AWS::StackName}-${AWS::Region}
+      Path: /
+      AssumeRolePolicyDocument: |
+        {
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": { "Service": [ "codepipeline.amazonaws.com" ]},
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        }
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Resource: "*"
+                Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
+                  - cloudformation:*
+                  - cloudwatch:*
+                  - events:*
+                  - iam:PassRole
+                  - secretsmanager:*
+                  - ec2:*
+                  - s3:*
+                  - codestar-connections:*
+                  - wafv2:*
+
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties: 
+      BucketName: !Sub cluster-artifact-${AWS::Region}
+
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Sub ${ClusterName}-cluster
+      RoleArn: !GetAtt CodePipelineServiceRole.Arn
+      ArtifactStore:
+        Type: S3
+        Location: !Ref ArtifactBucket
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: Infra
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: 1
+                Provider: GitHub
+              Configuration:
+                Owner: !Sub "${GitHubOwner}"
+                Repo: !Ref GitHubRepoInfra
+                Branch: !Ref GitHubBranchInfra
+                OAuthToken: !Ref GitHubToken
+              OutputArtifacts:
+                - Name: Infra
+              RunOrder: 1
+
+        - Name: ClusterDeploy
+          Actions:
+            - Name: CreateVPCChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_REPLACE
+                StackName: !Sub cluster-${ClusterName}-vpc
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-vpc.yml
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "ClusterName": "${ClusterName}",
+                    "CidrIp": "${CidrIp}",
+                    "IpPublicSubnet1": "${IpPublicSubnet1}",
+                    "IpPublicSubnet2": "${IpPublicSubnet2}",
+                    "IpPrivateSubnet1": "${IpPrivateSubnet1}",
+                    "IpPrivateSubnet2": "${IpPrivateSubnet2}"
+                  }
+              RunOrder: 2
+              InputArtifacts:
+                - Name: Infra
+
+            - Name: ExecuteVPCChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Sub cluster-${ClusterName}-vpc
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+              RunOrder: 3
+
+            - Name: CreateELBChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_REPLACE
+                StackName: !Sub cluster-${ClusterName}-elb
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-elb.yml
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "ClusterName": "${ClusterName}",
+                    "DefaultAcmCertificateArn": "${DefaultAcmCertificateArn}"
+                  }
+              RunOrder: 4
+              InputArtifacts:
+                - Name: Infra
+
+            - Name: ExecuteELBChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Sub cluster-${ClusterName}-elb
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+              RunOrder: 5
+
+            - Name: CreateECSChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_REPLACE
+                StackName: !Sub cluster-${ClusterName}-ecs
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-ecs.yml
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "ClusterName": "${ClusterName}",
+                    "ECSInstanceType": "${ECSInstanceType}",
+                    "KeyName": "${KeyName}",
+                    "AsgServiceMin": "${AsgServiceMin}",
+                    "AsgServiceMax": "${AsgServiceMax}",
+                    "AsgServiceDesired": "${AsgServiceDesired}",
+                    "EcsImage": "${EcsImage}",
+                    "EbsEncrypted": "${EbsEncrypted}"
+                  }
+              RunOrder: 6
+              InputArtifacts:
+                - Name: Infra
+
+            - Name: ExecuteECSChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Sub cluster-${ClusterName}-ecs
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+              RunOrder: 7
+
+            - Name: CreateAlarmsChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_REPLACE
+                StackName: !Sub cluster-${ClusterName}-alarms
+                Capabilities: CAPABILITY_NAMED_IAM
+                TemplatePath: Infra::aws/cloudformation/cluster/cluster-alarms.yml
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+                ParameterOverrides: !Sub |
+                  {
+                    "ClusterName": "${ClusterName}"
+                  }
+              RunOrder: 8
+              InputArtifacts:
+                - Name: Infra
+
+            - Name: ExecuteAlarmsChangeSet
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: '1'
+                Provider: CloudFormation
+              Configuration:
+                ChangeSetName: Deploy
+                ActionMode: CHANGE_SET_EXECUTE
+                StackName: !Sub cluster-${ClusterName}-alarms
+                RoleArn: !GetAtt CloudFormationExecutionRole.Arn
+              RunOrder: 9
+
+Outputs:
+  PipelineUrl:
+    Value: !Sub https://console.aws.amazon.com/codepipeline/home?region=${AWS::Region}#/view/${Pipeline}
+
+  CloudFormationExecutionRoleArn:
+    Value: !GetAtt CloudFormationExecutionRole.Arn
+    Export:
+      Name: !Sub ${ClusterName}-CloudFormationExecutionRoleArn
+
+  ArtifactBucket:
+    Value: !Ref ArtifactBucket
+    Export:
+      Name: !Sub cluster-artifact-${AWS::Region}

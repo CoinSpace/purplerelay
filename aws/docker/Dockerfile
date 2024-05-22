@@ -28,6 +28,8 @@ RUN \
     libsecp256k1-dev \
     zstd-dev \
     nginx \
+    openrc \
+    nano \
   && rm -rf /var/cache/apk/* \
   && cpanm Regexp::Grammars \
   && git submodule update --init \
@@ -51,6 +53,8 @@ RUN \
 
 RUN \
   apk --no-cache add \
+    openrc \
+    nano \
     nginx \
     curl \
     lsb-release \

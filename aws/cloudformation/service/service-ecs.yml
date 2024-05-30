@@ -171,6 +171,7 @@ Resources:
         - Field: host-header
           Values:
             - !Ref SiteName
+            - !Sub "*.${SiteName}"
       Actions:
         - TargetGroupArn: !Ref TargetGroup
           Type: forward

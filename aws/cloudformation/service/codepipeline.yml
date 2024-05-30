@@ -50,7 +50,7 @@ Parameters:
   # Change the value when using the right DNS
   SiteName:
     Type: String
-    Default: "*.purplerelay.com"
+    Default: "purplerelay.com"
 
   ContainerPort:
     Type: Number

@@ -53,5 +53,5 @@ RUN chmod +x ./entrypoint.sh
 EXPOSE 80
 EXPOSE 443
 
-ENTRYPOINT ["/app/strfry"]
-CMD ["relay"]
+# ENTRYPOINT ["/app/strfry"]
+# CMD ["relay"]

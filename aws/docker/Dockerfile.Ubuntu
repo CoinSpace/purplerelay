@@ -1,0 +1,57 @@
+FROM ubuntu:jammy as build
+
+ENV TZ=Europe/London
+
+WORKDIR /build
+
+COPY . .
+
+RUN apt update && apt install -y --no-install-recommends \
+    git g++ make pkg-config libtool ca-certificates \
+    libyaml-perl libtemplate-perl libssl-dev zlib1g-dev \
+    liblmdb-dev libflatbuffers-dev libsecp256k1-dev libb2-dev \
+    libzstd-dev nginx make \
+    && rm -rf /var/lib/apt/lists/* \
+    && cpanm Regexp::Grammars
+
+RUN git submodule update --init
+RUN make setup-golpe
+RUN make -j4
+
+FROM ubuntu:jammy as runner
+
+ENV MNT_DIR ./strfry-db
+
+WORKDIR /app
+
+RUN apt update && apt install -y --no-install-recommends \
+    liblmdb0 libflatbuffers1 libsecp256k1-0 libb2-1 libzstd1 \
+    git python3 fuse curl nginx openssh-client make \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /build/strfry strfry
+COPY ./STAR.purplerelay.com.key /etc/ssl/STAR.purplerelay.com.key
+COPY ./ssl-bundle.crt /etc/ssl/ssl-bundle.crt
+
+COPY --from=build ./build/nginx.conf ./
+COPY --from=build ./build/default.conf ./
+RUN mkdir -p /var/www/media
+COPY --from=build ./build/favicon.ico /var/www/media/favicon.ico
+
+RUN curl -fsSL https://deno.land/install.sh | sh
+
+COPY ./strfry.conf /etc/strfry.conf
+COPY ./strfry-router.config /etc/strfry-router.config
+COPY ./strfry-policy.ts /opt/strfry-policy.ts
+COPY ./strfry-db ./strfry-db
+
+RUN chmod +x /opt/strfry-policy.ts
+
+COPY ./entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh
+
+EXPOSE 80
+EXPOSE 443
+
+ENTRYPOINT ["/app/strfry"]
+CMD ["relay"]

@@ -14,7 +14,7 @@ phases:
       - git clone -b feature/update-nginx https://github.com/purplerelay/strfry.git /var/tmp
       - cp -r $CODEBUILD_SRC_DIR_App/. .
       - cp -r /var/tmp/.git .
-      - cp aws/docker/Dockerfile.Ubuntu .
+      - cp aws/docker/Dockerfile.Ubuntu ./Dockerfile
       - cp aws/nginx/* .
       - cp aws/scripts/entrypoint.sh .
       - cp aws/scripts/sync-entrypoint.sh .

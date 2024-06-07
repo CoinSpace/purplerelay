@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eo pipefail
+# set -eo pipefail
 
 mkdir -p /etc/nginx/sites-enabled
 mkdir -p /etc/nginx/sites-available

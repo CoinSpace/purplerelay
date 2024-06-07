@@ -25,7 +25,7 @@ ENV MNT_DIR ./strfry-db
 WORKDIR /app
 
 RUN apt update && apt install -y --no-install-recommends \
-    liblmdb0 libflatbuffers1 libsecp256k1-0 libb2-1 libzstd1 \
+    liblmdb0 libflatbuffers1 libsecp256k1-0 libb2-1 libzstd1 systemd \
     git python3 fuse curl nginx openssh-client make unzip ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -39,6 +39,9 @@ RUN mkdir -p /var/www/media
 COPY --from=build ./build/favicon.ico /var/www/media/favicon.ico
 
 RUN curl -fsSL https://deno.land/install.sh | sh
+
+ENV DENO_INSTALL="/root/.deno"
+ENV PATH="$DENO_INSTALL/bin:$PATH"
 
 COPY ./strfry.conf /etc/strfry.conf
 COPY ./strfry-router.config /etc/strfry-router.config

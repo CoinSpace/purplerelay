@@ -53,6 +53,9 @@ RUN chmod +x /opt/strfry-policy.ts
 COPY ./entrypoint.sh ./entrypoint.sh
 RUN chmod +x ./entrypoint.sh
 
+COPY ./sync-entrypoint ./sync-entrypoint
+RUN chmod +x ./sync-entrypoint
+
 EXPOSE 80
 EXPOSE 443
 

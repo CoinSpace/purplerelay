@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eo pipefail
+# set -eo pipefail
 
 mkdir -p /etc/nginx/sites-enabled
 mkdir -p /etc/nginx/sites-available
@@ -12,5 +12,6 @@ ln -s /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 adduser -S www-data
 
 nginx
+./strfry sync wss://purplerelay.com --dir both
 ./strfry relay
 ./strfry router /etc/strfry-router.config &

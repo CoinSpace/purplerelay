@@ -99,7 +99,7 @@ Conditions:
   hasServiceDiscovery: !Equals [!Ref ContainerNetworkMode, "awsvpc"]
   hasOnlyOneTask: !Equals [!Ref EcsTasksNumber, "1"]
   containerHasMemoryLimit: !Not [!Equals [!Ref ContainerMemoryMax, "LIMITLESS"]]
-  IsUSEast1: !Equals [!Ref "AWS::Region", "us-east-1"]
+  IsEuCentral1: !Equals [!Ref "AWS::Region", "eu-central-1"]
 
 Resources:
   PrivateDnsNamespace:
@@ -263,7 +263,7 @@ Resources:
           Command:
             - sh
             - -c
-            - !If [IsUSEast1, "./sync-entrypoint.sh", "./entrypoint.sh"]
+            - !If [IsEuCentral1, "./sync-entrypoint.sh", "./entrypoint.sh"]
           Environment:
             - Name: GIT_COMMIT
               Value: !Ref GitCommit

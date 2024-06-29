@@ -13,5 +13,4 @@ adduser -S www-data
 
 nginx
 ./strfry sync wss://purplerelay.com --dir both
-./strfry relay
 ./strfry router /etc/strfry-router.config &

@@ -94,12 +94,16 @@ Parameters:
   MinCapacity:
     Type: String 
 
+  RoterRelay:
+    Type: String
+    Default: false
+
 Conditions:
   hasSSL: !Equals [!Ref HasHTTPS, "true"]
   hasServiceDiscovery: !Equals [!Ref ContainerNetworkMode, "awsvpc"]
   hasOnlyOneTask: !Equals [!Ref EcsTasksNumber, "1"]
   containerHasMemoryLimit: !Not [!Equals [!Ref ContainerMemoryMax, "LIMITLESS"]]
-  IsEuCentral1: !Equals [!Ref "AWS::Region", "eu-central-1"]
+  IsRouterRegion: !Equals [!Ref RoterRelay, "true"]
 
 Resources:
   PrivateDnsNamespace:
@@ -263,7 +267,7 @@ Resources:
           Command:
             - sh
             - -c
-            - !If [IsEuCentral1, "./sync-entrypoint.sh", "./entrypoint.sh"]
+            - !If [IsRouterRegion, "./sync-entrypoint.sh", "./entrypoint.sh"]
           Environment:
             - Name: GIT_COMMIT
               Value: !Ref GitCommit

@@ -187,7 +187,7 @@ Resources:
       - ListenerCertificate
       - SiteNameListenerRule
     Properties:
-      ServiceName: !Sub ${ClusterName}
+      ServiceName: !If [IsRouterRegion, "relay-router", "relay-app"]
       Cluster:
         'Fn::ImportValue': !Sub ${ClusterName}-ECSCluster
       TaskDefinition: !Ref servicetaskdefinitionWEB
@@ -256,7 +256,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Sub /ecs-cluster/${ClusterName}
+              awslogs-group:  !If [IsRouterRegion, !Sub "/ecs-cluster/${ClusterName}/relay-router", "/ecs-cluster/${ClusterName}/relay-app"] 
               awslogs-stream-prefix: /ecs-task-output
               awslogs-region: !Ref AWS::Region
           Ulimits:

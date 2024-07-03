@@ -115,7 +115,7 @@ Resources:
       Description: AWS Cloud Map private DNS namespace
       Vpc:
         'Fn::ImportValue': !Sub ${ClusterName}-VPC
-      Name: !Sub ${AWS::Region}-${ClusterName}.internal
+      Name: !Sub ${AWS::Region}-${ClusterName}-${AppName}.internal
       Properties:
         DnsProperties:
           SOA:

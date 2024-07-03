@@ -4,6 +4,9 @@ Parameters:
   ClusterName:
     Type: String
 
+  AppName:
+    Type: String
+
   EcsAlarmIncreaseCpuUtilizationOperator:
     Type: String
     Default: GreaterThanThreshold
@@ -40,7 +43,7 @@ Resources:
           Value:
             'Fn::ImportValue': !Sub ${ClusterName}-AutoScalingGroup
       AlarmActions:
-        - 'Fn::ImportValue': !Sub ${ClusterName}-WebEcsScaleOut
+        - 'Fn::ImportValue': !Sub ${ClusterName}-${AppName}-WebEcsScaleOut
       AlarmName: !Sub ecs_alarm_increase_cpuutilization
       Period: !Ref EcsAlarmIncreaseCpuUtilizationSeconds
       ComparisonOperator: !Ref EcsAlarmIncreaseCpuUtilizationOperator
@@ -58,7 +61,7 @@ Resources:
           Value:
             'Fn::ImportValue': !Sub ${ClusterName}-AutoScalingGroup
       AlarmActions:
-        - 'Fn::ImportValue': !Sub ${ClusterName}-WebEcsScaleIn
+        - 'Fn::ImportValue': !Sub ${ClusterName}-${AppName}-WebEcsScaleIn
       AlarmName: !Sub ecs_alarm_decrease_cpuutilization
       Period: !Ref EcsAlarmDecreaseCpuUtilizationSeconds
       ComparisonOperator: !Ref EcsAlarmDecreaseCpuUtilizationOperator

@@ -109,6 +109,11 @@ Conditions:
   IsRouterRegion: !Equals [!Ref RoterRelay, "true"]
 
 Resources:
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /ecs-cluster/${ClusterName}/${AppName}
+
   PrivateDnsNamespace:
     Type: 'AWS::ServiceDiscovery::PrivateDnsNamespace'
     Properties:

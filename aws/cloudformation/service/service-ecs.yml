@@ -101,9 +101,6 @@ Parameters:
   AppName:
     Type: String
 
-  RoterRelay:
-    Type: String
-
 Conditions:
   hasSSL: !Equals [!Ref HasHTTPS, "true"]
   hasServiceDiscovery: !Equals [!Ref ContainerNetworkMode, "awsvpc"]

@@ -351,7 +351,7 @@ Outputs:
   TargetGroup:
     Value: !Ref TargetGroup
     Export:
-      Name: !Sub ${ClusterName}-tg
+      Name: !Sub ${ClusterName}-${AppName}-tg
 
   TargetGroupFullName:
     Value: !Sub ${TargetGroup.TargetGroupFullName}

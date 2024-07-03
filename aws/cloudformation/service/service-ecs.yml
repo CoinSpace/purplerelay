@@ -259,7 +259,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group:  !If [IsRouterRegion, !Sub "/ecs-cluster/${ClusterName}/relay-router", "/ecs-cluster/${ClusterName}/relay-app"] 
+              awslogs-group: !Sub "/ecs-cluster/${ClusterName}/${AppName}"
               awslogs-stream-prefix: /ecs-task-output
               awslogs-region: !Ref AWS::Region
           Ulimits:

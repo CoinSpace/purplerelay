@@ -98,6 +98,12 @@ Parameters:
     Type: String
     Default: false
 
+  AppName:
+    Type: String
+
+  RoterRelay:
+    Type: String
+
 Conditions:
   hasSSL: !Equals [!Ref HasHTTPS, "true"]
   hasServiceDiscovery: !Equals [!Ref ContainerNetworkMode, "awsvpc"]
@@ -133,7 +139,7 @@ Resources:
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Sub ${ClusterName}-tg-web
+      Name: !Sub ${ClusterName}-${AppName}-tg-web
       VpcId:
         'Fn::ImportValue': !Sub ${ClusterName}-VPC
       Protocol: HTTP
@@ -202,13 +208,13 @@ Resources:
       ServiceRegistries:
         - RegistryArn:
             'Fn::GetAtt': [ServiceDiscovery, Arn]
-          ContainerName: !Sub Application__${ClusterName}
+          ContainerName: !Sub ${ClusterName}-${AppName}
       DeploymentConfiguration:
         MinimumHealthyPercent: !If [hasOnlyOneTask, 0, 100]
         MaximumPercent: 200
       LoadBalancers:
         -
-          ContainerName: !Sub Application__${ClusterName}
+          ContainerName: !Sub ${ClusterName}-${AppName}
           ContainerPort: !Ref ContainerPort
           TargetGroupArn: !Ref TargetGroup
       HealthCheckGracePeriodSeconds: !Ref AlbHealthCheckStartPeriod
@@ -243,7 +249,7 @@ Resources:
       Cpu: !Ref ContainerVirtualCPUs
       ContainerDefinitions:
         -
-          Name: !Sub Application__${ClusterName}
+          Name: !Sub ${ClusterName}-${AppName}
           Image: !Sub ${DockerImageVersion}
           PortMappings:
             -
@@ -301,7 +307,7 @@ Resources:
       - ListenerCertificate
       - SiteNameListenerRule
     Properties:
-      PolicyName: !Sub ${ClusterName}__WebEcsScaleOut
+      PolicyName: !Sub ${ClusterName}_${AppName}_WebEcsScaleOut
       PolicyType: StepScaling
       ScalingTargetId: !Ref WebScalableTarget
       ScalableDimension: ecs:service:DesiredCount
@@ -321,7 +327,7 @@ Resources:
       - ListenerCertificate
       - SiteNameListenerRule
     Properties:
-      PolicyName: !Sub ${ClusterName}__WebEcsScaleIn
+      PolicyName: !Sub ${ClusterName}_${AppName}_WebEcsScaleIn
       PolicyType: StepScaling
       ScalingTargetId: !Ref WebScalableTarget
       ScalableDimension: ecs:service:DesiredCount

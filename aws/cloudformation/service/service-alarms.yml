@@ -44,7 +44,7 @@ Resources:
             'Fn::ImportValue': !Sub ${ClusterName}-AutoScalingGroup
       AlarmActions:
         - 'Fn::ImportValue': !Sub ${ClusterName}-${AppName}-WebEcsScaleOut
-      AlarmName: !Sub ecs_alarm_increase_cpuutilization
+      AlarmName: !Sub ecs_alarm_increase_cpuutilization-${AppName}
       Period: !Ref EcsAlarmIncreaseCpuUtilizationSeconds
       ComparisonOperator: !Ref EcsAlarmIncreaseCpuUtilizationOperator
       Statistic: Average
@@ -62,7 +62,7 @@ Resources:
             'Fn::ImportValue': !Sub ${ClusterName}-AutoScalingGroup
       AlarmActions:
         - 'Fn::ImportValue': !Sub ${ClusterName}-${AppName}-WebEcsScaleIn
-      AlarmName: !Sub ecs_alarm_decrease_cpuutilization
+      AlarmName: !Sub ecs_alarm_decrease_cpuutilization-${AppName}
       Period: !Ref EcsAlarmDecreaseCpuUtilizationSeconds
       ComparisonOperator: !Ref EcsAlarmDecreaseCpuUtilizationOperator
       Statistic: Average

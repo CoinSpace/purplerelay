@@ -341,12 +341,12 @@ Outputs:
   WebEcsScaleOutPolicy:
     Value: !Ref WebEcsScaleOutPolicy
     Export:
-      Name: !Sub ${ClusterName}-WebEcsScaleOut
+      Name: !Sub ${ClusterName}-${AppName}-WebEcsScaleOut
 
   WebEcsScaleInPolicy:
     Value: !Ref WebEcsScaleInPolicy
     Export:
-      Name: !Sub ${ClusterName}-WebEcsScaleIn
+      Name: !Sub ${ClusterName}-${AppName}-WebEcsScaleIn
 
   TargetGroup:
     Value: !Ref TargetGroup
@@ -356,9 +356,9 @@ Outputs:
   TargetGroupFullName:
     Value: !Sub ${TargetGroup.TargetGroupFullName}
     Export:
-      Name: !Sub ${ClusterName}-TargetGroupFullName
+      Name: !Sub ${ClusterName}-${AppName}-TargetGroupFullName
 
   serviceECS:
     Value: !Ref Service
     Export:
-      Name: !Sub ${ClusterName}-serviceECS
+      Name: !Sub ${ClusterName}-${AppName}-serviceECS

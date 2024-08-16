@@ -19,10 +19,11 @@ phases:
       - cp aws/scripts/entrypoint.sh .
       - cp aws/scripts/sync-entrypoint.sh .
       - aws s3 cp s3://purplerelay-certificates ./ --recursive --region us-east-1
-      - docker pull $REPOSITORY_URI:latest || true
+      # - docker pull $REPOSITORY_URI:latest || true
   build:
     commands:
-      - docker build --cache-from $REPOSITORY_URI:latest --tag $REPOSITORY_URI:$IMAGE_TAG .
+      # - docker build --cache-from $REPOSITORY_URI:latest --tag $REPOSITORY_URI:$IMAGE_TAG .
+      - docker build --tag $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
   post_build:
     commands:

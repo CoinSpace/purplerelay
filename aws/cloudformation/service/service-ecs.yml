@@ -280,7 +280,7 @@ Resources:
             - Name: GIT_COMMIT
               Value: !Ref GitCommit
           HealthCheck:
-            Command: ["CMD-SHELL", "ps ax | grep -v grep | grep relay > /dev/null"]
+            Command: !If [IsRouterRegion, ["CMD-SHELL", "ps aux | grep strfry"], ["CMD-SHELL", "ps ax | grep -v grep | grep relay > /dev/null"]]
             Interval: !Ref ContainerHealthCheckInterval
             Timeout: !Ref ContainerHealthCheckTimeout
             Retries: !Ref ContainerHealthCheckRetries

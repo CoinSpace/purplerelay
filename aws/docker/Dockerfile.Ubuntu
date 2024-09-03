@@ -61,7 +61,7 @@ RUN chmod +x ./sync-entrypoint.sh
 COPY ./config-policy.sh ./config-policy.sh
 RUN chmod +x ./config-policy.sh
 
-COPY ./sync-entrypoint.sh ./config-strfry-router.sh
+COPY ./config-strfry-router.sh ./config-strfry-router.sh
 RUN chmod +x ./config-strfry-router.sh
 
 EXPOSE 80

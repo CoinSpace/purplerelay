@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ORIGINAL_FILE=./strfry-router-base.config
-NEW_FILE=./strfry-router.config
+NEW_FILE=/etc/strfry-router.config
 
 get_internal_hosted_zones() {
   aws route53 list-hosted-zones --query "HostedZones[?ends_with(Name, '.internal.')].Id" --output text

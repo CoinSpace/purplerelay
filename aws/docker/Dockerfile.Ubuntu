@@ -47,6 +47,8 @@ COPY ./strfry.conf /etc/strfry.conf
 COPY ./strfry-router.config /etc/strfry-router.config
 COPY ./strfry-policy.ts /opt/strfry-policy.ts
 COPY ./strfry-db ./strfry-db
+COPY ./strfry-policy-base.ts ./strfry-policy-base.ts
+COPY ./strfry-router-base.config ./strfry-router-base.config
 
 RUN chmod +x /opt/strfry-policy.ts
 
@@ -55,6 +57,12 @@ RUN chmod +x ./entrypoint.sh
 
 COPY ./sync-entrypoint.sh ./sync-entrypoint.sh
 RUN chmod +x ./sync-entrypoint.sh
+
+COPY ./config-policy.sh ./config-policy.sh
+RUN chmod +x ./config-policy.sh
+
+COPY ./sync-entrypoint.sh ./config-strfry-router.sh
+RUN chmod +x ./config-strfry-router.sh
 
 EXPOSE 80
 EXPOSE 443

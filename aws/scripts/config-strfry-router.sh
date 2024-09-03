@@ -2,7 +2,7 @@
 
 INSTANCE_NAME_FILTER=purplerelay-cluster
 ORIGINAL_FILE=./strfry-policy-base.ts
-NEW_FILE=./strfry-policy.ts
+NEW_FILE=/opt/strfry-policy.ts
 
 # Função para obter todas as regiões disponíveis
 get_regions() {

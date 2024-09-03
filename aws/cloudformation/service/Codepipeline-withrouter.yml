@@ -178,7 +178,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-
+                  - logs:DeleteLogGroup
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
     Properties:

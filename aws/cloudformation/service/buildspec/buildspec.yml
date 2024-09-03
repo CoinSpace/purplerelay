@@ -18,6 +18,11 @@ phases:
       - cp aws/nginx/* .
       - cp aws/scripts/entrypoint.sh .
       - cp aws/scripts/sync-entrypoint.sh .
+      - cp aws/scripts/config-policy.sh .
+      - cp aws/scripts/config-strfry-router.sh .
+      - cp aws/scripts/utils/strfry-policy-base.ts .
+      - cp aws/scripts/utils/strfry-router-base.config .
+      - chmod +x *.sh
       - aws s3 cp s3://purplerelay-certificates ./ --recursive --region us-east-1
       - docker pull $REPOSITORY_URI:latest || true
   build:

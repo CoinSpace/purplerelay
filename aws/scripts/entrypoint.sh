@@ -9,6 +9,11 @@ cp -r ./default.conf /etc/nginx/sites-enabled/default.conf
 
 ln -s /etc/nginx/sites-enabled/default /etc/nginx/sites-available/default
 
+chmod +x ./config-policy.sh
+chmod +x ./config-strfry-router.sh
+./config-policy.sh
+./config-strfry-router.sh
+
 adduser -S www-data
 
 nginx

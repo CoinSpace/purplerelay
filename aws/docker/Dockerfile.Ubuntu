@@ -64,6 +64,10 @@ RUN chmod +x ./config-policy.sh
 COPY ./config-strfry-router.sh ./config-strfry-router.sh
 RUN chmod +x ./config-strfry-router.sh
 
+COPY ./install-awscli.sh ./install-awscli.sh
+RUN chmod +x ./install-awscli.sh
+RUN ./install-awscli.sh
+
 EXPOSE 80
 EXPOSE 443
 

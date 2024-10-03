@@ -93,6 +93,10 @@ Parameters:
     Type: String
     NoEcho: true
 
+  AppName:
+    Type: String
+    Default: relay
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -153,6 +157,7 @@ Resources:
                   - autoscaling:*
                   - rds:*
                   - servicediscovery:*
+                  - logs:*
 
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
@@ -390,7 +395,8 @@ Resources:
                     "DefaultAcmCertificateArn": "${DefaultAcmCertificateArn}",
                     "SiteTgPriority": "${SiteTgPriority}",
                     "HasHTTPS": "${HasHTTPS}",
-                    "SiteName": "${SiteName}"
+                    "SiteName": "${SiteName}",
+                    "AppName": "${AppName}"
                   }
               RunOrder: 3
               InputArtifacts:
@@ -425,7 +431,8 @@ Resources:
                 RoleArn: !GetAtt CloudFormationServiceRole.Arn
                 ParameterOverrides: !Sub |
                   {
-                    "ClusterName": "${ClusterName}"
+                    "ClusterName": "${ClusterName}",
+                    "AppName": "${AppName}"
                   }
               RunOrder: 5
               InputArtifacts:

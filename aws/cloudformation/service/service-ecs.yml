@@ -275,7 +275,7 @@ Resources:
           Command:
             - sh
             - -c
-            - !If [IsRouterRegion, "./sync-entrypoint.sh", "./entrypoint.sh"]
+            - !If [IsRouterRegion, "./sync-entrypoint.sh && tail -f /dev/null", "./entrypoint.sh"]
           Environment:
             - Name: GIT_COMMIT
               Value: !Ref GitCommit

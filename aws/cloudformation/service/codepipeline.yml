@@ -6,7 +6,7 @@ Parameters:
 
   ProviderBranch:
     Type: String
-    Default: feature/update-nginx
+    Default: feature/version-1.0.1
 
   Owner:
     Type: String
@@ -80,6 +80,10 @@ Parameters:
     Type: Number
     Default: 1
 
+  AppName:
+    Type: String
+    Default: relay
+
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -140,6 +144,7 @@ Resources:
                   - autoscaling:*
                   - rds:*
                   - servicediscovery:*
+                  - logs:*
 
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
@@ -379,7 +384,8 @@ Resources:
                     "DefaultAcmCertificateArn": "${DefaultAcmCertificateArn}",
                     "SiteTgPriority": "${SiteTgPriority}",
                     "HasHTTPS": "${HasHTTPS}",
-                    "SiteName": "${SiteName}"
+                    "SiteName": "${SiteName}",
+                    "AppName": "${AppName}"
                   }
               RunOrder: 3
               InputArtifacts:
@@ -414,7 +420,8 @@ Resources:
                 RoleArn: !GetAtt CloudFormationServiceRole.Arn
                 ParameterOverrides: !Sub |
                   {
-                    "ClusterName": "${ClusterName}"
+                    "ClusterName": "${ClusterName}",
+                    "AppName": "${AppName}"
                   }
               RunOrder: 5
               InputArtifacts:

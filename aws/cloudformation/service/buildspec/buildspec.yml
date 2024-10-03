@@ -1,41 +1,42 @@
-version: 0.2
-phases:
-  install:
-    commands:
-      # - echo docker login....
-      # - echo $DOCKER_LOGIN_KEY | docker login -u $DOCKER_LOGIN --password-stdin
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - TAG=$(echo `date +%s` | cut -c 1-7)
-      - IMAGE_TAG=${TAG:=latest}
-  pre_build:
-    commands:
-      - git clone -b feature/update-nginx https://github.com/purplerelay/strfry.git /var/tmp
-      - cp -r $CODEBUILD_SRC_DIR_App/. .
-      - cp -r /var/tmp/.git .
-      - cp aws/docker/Dockerfile.Ubuntu ./Dockerfile
-      - cp aws/nginx/* .
-      - cp aws/scripts/entrypoint.sh .
-      - cp aws/scripts/sync-entrypoint.sh .
-      - cp aws/scripts/config-policy.sh .
-      - cp aws/scripts/config-strfry-router.sh .
-      - cp aws/scripts/install-awscli.sh .
-      - cp aws/scripts/utils/strfry-policy-base.ts .
-      - cp aws/scripts/utils/strfry-router-base.config .
-      - chmod +x *.sh
-      - aws s3 cp s3://purplerelay-certificates ./ --recursive --region us-east-1
-      - docker pull $REPOSITORY_URI:latest || true
-  build:
-    commands:
-      - docker build --cache-from $REPOSITORY_URI:latest --tag $REPOSITORY_URI:$IMAGE_TAG .
-      - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
-  post_build:
-    commands:
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - docker push $REPOSITORY_URI:latest
-      - printf '{"tag":"%s:%s"}' "$REPOSITORY_URI" "$IMAGE_TAG" > /tmp/build.json
-artifacts:
-  files:
-    - /tmp/build.json
-  discard-paths: yes
+  version: 0.2
+  phases:
+    install:
+      commands:
+        # - echo docker login....
+        # - echo $DOCKER_LOGIN_KEY | docker login -u $DOCKER_LOGIN --password-stdin
+        - echo Logging in to Amazon ECR...
+        - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+        - TAG=$(echo `date +%s` | cut -c 1-7)
+        - IMAGE_TAG=${TAG:=latest}
+    pre_build:
+      commands:
+        - git clone -b v1.0.1 https://github.com/purplerelay/strfry.git /var/tmp
+        - cp -r $CODEBUILD_SRC_DIR_App/. .
+        - cp -r /var/tmp/.git .
+        - git submodule update --init --recursive
+        - cp aws/docker/Dockerfile.Ubuntu ./Dockerfile
+        - cp aws/nginx/* .
+        - cp aws/scripts/entrypoint.sh .
+        - cp aws/scripts/sync-entrypoint.sh .
+        - cp aws/scripts/config-policy.sh .
+        - cp aws/scripts/config-strfry-router.sh .
+        - cp aws/scripts/install-awscli.sh .
+        - cp aws/scripts/utils/strfry-policy-base.ts .
+        - cp aws/scripts/utils/strfry-router-base.config .
+        - chmod +x *.sh
+        - aws s3 cp s3://purplerelay-certificates ./ --recursive --region us-east-1
+        - docker pull $REPOSITORY_URI:latest || true
+    build:
+      commands:
+        - docker build --cache-from $REPOSITORY_URI:latest --tag $REPOSITORY_URI:$IMAGE_TAG .
+        - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
+    post_build:
+      commands:
+        - docker push $REPOSITORY_URI:$IMAGE_TAG
+        - docker push $REPOSITORY_URI:latest
+        - printf '{"tag":"%s:%s"}' "$REPOSITORY_URI" "$IMAGE_TAG" > /tmp/build.json
+  artifacts:
+    files:
+      - /tmp/build.json
+    discard-paths: yes
